@@ -1,0 +1,6 @@
+{
+  "name": "EthioShein Marketplace",
+  "description": "A production-ready, localized fashion e-commerce marketplace for Ethiopia, featuring traditional Habesha hand-woven wear, modern SHEIN-inspired styles, multi-currency display, and checkout redirection via Telegram, WhatsApp, and phone calls.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
