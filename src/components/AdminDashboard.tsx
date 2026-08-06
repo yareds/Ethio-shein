@@ -234,16 +234,16 @@ export default function AdminDashboard({
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="admin-portal">
       
       {/* Top Title Section */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-gray-100 pb-6 mb-8 gap-4">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between border-b border-ivory-dark pb-6 mb-8 gap-4">
         <div>
-          <h1 className="text-3xl font-sans font-black text-black">EthioShein Admin Panel</h1>
-          <p className="text-sm text-gray-500 mt-1">Manage products, categories, stock, and live customer messaging inquiries.</p>
+          <h1 className="text-3xl font-fraunces font-bold text-espresso">EthioShein Admin Panel</h1>
+          <p className="text-sm text-espresso-soft mt-1">Manage products, categories, stock, and live customer messaging inquiries.</p>
         </div>
         <div className="flex space-x-2">
           {!isFormOpen && activeTab === 'products' && (
             <button
               onClick={handleOpenAddForm}
-              className="bg-black hover:bg-gray-800 text-white font-bold text-xs px-5 py-3 rounded-xl flex items-center space-x-2 shadow-md transition-all cursor-pointer"
+              className="bg-espresso hover:bg-terracotta text-ivory font-bold text-xs px-5 py-3 rounded-xl flex items-center space-x-2 shadow-sm transition-all cursor-pointer"
               id="admin-add-product-btn"
             >
               <PlusCircle className="w-4 h-4" />
@@ -255,45 +255,45 @@ export default function AdminDashboard({
 
       {/* KPI METRICS SHELF */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8" id="admin-kpis">
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-center space-x-4">
-          <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-            <Package className="w-6 h-6" />
+        <div className="bg-white p-5 rounded-2xl border border-ivory-dark shadow-xs flex items-center space-x-4">
+          <div className="p-3 bg-ochre-soft text-espresso rounded-xl">
+            <Package className="w-6 h-6 text-espresso" />
           </div>
           <div>
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest block">Products</span>
-            <span className="text-xl sm:text-2xl font-mono font-black text-black">{products.length}</span>
+            <span className="text-[10px] text-espresso-soft font-bold uppercase tracking-widest block">Products</span>
+            <span className="text-xl sm:text-2xl font-mono font-bold text-espresso">{products.length}</span>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-center space-x-4">
-          <div className="p-3 bg-red-50 text-red-600 rounded-xl">
-            <AlertCircle className="w-6 h-6 animate-pulse" />
+        <div className="bg-white p-5 rounded-2xl border border-ivory-dark shadow-xs flex items-center space-x-4">
+          <div className="p-3 bg-terracotta/10 text-terracotta rounded-xl">
+            <AlertCircle className="w-6 h-6 text-terracotta animate-pulse" />
           </div>
           <div>
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest block">Low Stock</span>
-            <span className="text-xl sm:text-2xl font-mono font-black text-red-600">
+            <span className="text-[10px] text-espresso-soft font-bold uppercase tracking-widest block">Low Stock</span>
+            <span className="text-xl sm:text-2xl font-mono font-bold text-terracotta">
               {lowStockProducts.length}
             </span>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-center space-x-4">
-          <div className="p-3 bg-indigo-50 text-indigo-600 rounded-xl">
-            <MessageSquare className="w-6 h-6" />
+        <div className="bg-white p-5 rounded-2xl border border-ivory-dark shadow-xs flex items-center space-x-4">
+          <div className="p-3 bg-ochre/10 text-ochre rounded-xl">
+            <MessageSquare className="w-6 h-6 text-espresso" />
           </div>
           <div>
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest block">Inquiries Logged</span>
-            <span className="text-xl sm:text-2xl font-mono font-black text-black">{orders.length}</span>
+            <span className="text-[10px] text-espresso-soft font-bold uppercase tracking-widest block">Inquiries Logged</span>
+            <span className="text-xl sm:text-2xl font-mono font-bold text-espresso">{orders.length}</span>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-xs flex items-center space-x-4">
-          <div className="p-3 bg-green-50 text-green-600 rounded-xl">
-            <DollarSign className="w-6 h-6" />
+        <div className="bg-white p-5 rounded-2xl border border-ivory-dark shadow-xs flex items-center space-x-4">
+          <div className="p-3 bg-forest/10 text-forest rounded-xl">
+            <DollarSign className="w-6 h-6 text-forest" />
           </div>
           <div>
-            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-widest block">Simulated Sales</span>
-            <span className="text-lg sm:text-xl font-mono font-black text-green-600">{totalSimulatedRevenue.toLocaleString()} ETB</span>
+            <span className="text-[10px] text-espresso-soft font-bold uppercase tracking-widest block">Simulated Sales</span>
+            <span className="text-lg sm:text-xl font-mono font-bold text-forest">{totalSimulatedRevenue.toLocaleString()} ETB</span>
           </div>
         </div>
       </div>
@@ -656,16 +656,16 @@ export default function AdminDashboard({
         </div>
       ) : (
         /* STANDARD TABBED CONSOLE PANELS */
-        <div className="bg-white rounded-3xl border border-gray-100 shadow-sm overflow-hidden" id="admin-main-stage">
+        <div className="bg-white rounded-3xl border border-ivory-dark shadow-xs overflow-hidden" id="admin-main-stage">
           
           {/* Tabs Menu bar */}
-          <div className="bg-gray-50/50 border-b border-gray-100 px-6 py-1 flex items-center space-x-4">
+          <div className="bg-ivory/60 border-b border-ivory-dark px-6 py-1 flex items-center space-x-4">
             <button
               onClick={() => setActiveTab('products')}
               className={`py-4 px-2 border-b-2 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 activeTab === 'products'
-                  ? 'border-black text-black'
-                  : 'border-transparent text-gray-400 hover:text-black'
+                  ? 'border-terracotta text-terracotta'
+                  : 'border-transparent text-espresso-soft hover:text-espresso'
               }`}
             >
               Catalog Products ({products.length})
@@ -674,8 +674,8 @@ export default function AdminDashboard({
               onClick={() => setActiveTab('categories')}
               className={`py-4 px-2 border-b-2 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 activeTab === 'categories'
-                  ? 'border-black text-black'
-                  : 'border-transparent text-gray-400 hover:text-black'
+                  ? 'border-terracotta text-terracotta'
+                  : 'border-transparent text-espresso-soft hover:text-espresso'
               }`}
             >
               Categories & Brands ({categories.length})
@@ -684,8 +684,8 @@ export default function AdminDashboard({
               onClick={() => setActiveTab('inquiries')}
               className={`py-4 px-2 border-b-2 text-xs font-bold uppercase tracking-wider transition-all cursor-pointer ${
                 activeTab === 'inquiries'
-                  ? 'border-black text-black text-indigo-600'
-                  : 'border-transparent text-gray-400 hover:text-black'
+                  ? 'border-terracotta text-terracotta'
+                  : 'border-transparent text-espresso-soft hover:text-espresso'
               }`}
             >
               Inquiry Inbox ({orders.length})

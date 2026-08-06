@@ -40,7 +40,7 @@ export default function Header({
   const t = (key: string) => translations[currentLanguage][key] || key;
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-100 shadow-xs" id="main-header">
+    <header className="sticky top-0 z-50 bg-ivory/95 backdrop-blur-md border-b border-ivory-dark shadow-xs" id="main-header">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
@@ -54,11 +54,11 @@ export default function Header({
               className="flex items-center space-x-2 group cursor-pointer"
               id="logo-button"
             >
-              <div className="bg-black text-white p-2 rounded-md font-mono tracking-widest text-lg font-black group-hover:bg-gray-800 transition-colors">
+              <div className="bg-espresso text-ivory p-2 rounded-md font-mono tracking-widest text-lg font-black group-hover:bg-terracotta transition-colors shadow-xs">
                 ES
               </div>
-              <span className="font-sans font-bold tracking-tight text-xl sm:text-2xl text-black">
-                ETHIO<span className="text-gray-500 font-normal">SHEIN</span>
+              <span className="font-sans font-bold tracking-tight text-xl sm:text-2xl text-espresso">
+                ETHIO<span className="text-terracotta font-medium">SHEIN</span>
               </span>
             </button>
           </div>
@@ -71,10 +71,10 @@ export default function Header({
                 placeholder={t('search.placeholder')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full bg-gray-50 border border-gray-200 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-hidden focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                className="w-full bg-white/80 border border-ivory-dark rounded-full py-2 pl-4 pr-10 text-sm text-espresso placeholder-espresso-soft/60 focus:outline-hidden focus:ring-2 focus:ring-terracotta focus:border-terracotta focus:bg-white transition-all shadow-xs"
                 id="search-input-desktop"
               />
-              <div className="absolute right-3 top-2.5 text-gray-400">
+              <div className="absolute right-3 top-2.5 text-espresso-soft">
                 <Search className="w-4 h-4" />
               </div>
             </div>
@@ -86,13 +86,13 @@ export default function Header({
             {/* Language Selector */}
             <button
               onClick={() => setLanguage(currentLanguage === 'en' ? 'am' : 'en')}
-              className="flex items-center space-x-1 px-2 py-1.5 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700 transition-colors cursor-pointer"
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-lg hover:bg-ivory-dark/40 text-sm font-medium text-espresso transition-colors cursor-pointer"
               title="Switch Language / ቋንቋ ይቀይሩ"
               id="lang-toggle-button"
             >
-              <Globe className="w-4 h-4 text-gray-500" />
-              <span className="hidden sm:inline">{currentLanguage === 'en' ? 'English' : 'አማርኛ'}</span>
-              <span className="sm:hidden uppercase">{currentLanguage}</span>
+              <Globe className="w-4 h-4 text-terracotta" />
+              <span className="hidden sm:inline font-semibold">{currentLanguage === 'en' ? 'English' : 'አማርኛ'}</span>
+              <span className="sm:hidden uppercase font-semibold">{currentLanguage}</span>
             </button>
 
             {/* Admin Portal Toggle */}
@@ -104,16 +104,16 @@ export default function Header({
                   onLoginClick();
                 }
               }}
-              className={`flex items-center space-x-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
+              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-sm font-semibold transition-colors cursor-pointer ${
                 isAdminMode 
-                  ? 'bg-red-50 text-red-700 hover:bg-red-100' 
+                  ? 'bg-terracotta/15 text-terracotta-dark hover:bg-terracotta/25' 
                   : adminUser
-                    ? 'bg-green-50 text-green-700 hover:bg-green-100'
-                    : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    ? 'bg-forest/15 text-forest hover:bg-forest/25'
+                    : 'bg-ivory-dark/30 text-espresso hover:bg-ivory-dark/50'
               }`}
               id="admin-toggle-button"
             >
-              <Shield className={`w-4 h-4 ${isAdminMode ? 'text-red-600' : adminUser ? 'text-green-600' : 'text-gray-500'}`} />
+              <Shield className={`w-4 h-4 ${isAdminMode ? 'text-terracotta' : adminUser ? 'text-forest' : 'text-espresso-soft'}`} />
               <span className="hidden lg:inline">
                 {isAdminMode 
                   ? t('admin.viewStore') 
@@ -126,26 +126,26 @@ export default function Header({
 
             {/* Admin Profile Details */}
             {adminUser && adminUser.email.toLowerCase() === 'yared.abegaz@gmail.com' && (
-              <div className="hidden sm:flex items-center space-x-2 border-l border-gray-150 pl-2 sm:pl-3" id="admin-profile-header">
+              <div className="hidden sm:flex items-center space-x-2 border-l border-ivory-dark pl-2 sm:pl-3" id="admin-profile-header">
                 {adminUser.picture ? (
                   <img
                     src={adminUser.picture}
                     alt={adminUser.name}
-                    className="w-8 h-8 rounded-full border border-gray-200"
+                    className="w-8 h-8 rounded-full border border-ivory-dark"
                     referrerPolicy="no-referrer"
                   />
                 ) : (
-                  <div className="w-8 h-8 rounded-full bg-black text-white flex items-center justify-center font-bold text-xs">
+                  <div className="w-8 h-8 rounded-full bg-espresso text-ivory flex items-center justify-center font-bold text-xs">
                     YA
                   </div>
                 )}
                 <div className="flex flex-col text-left">
-                  <span className="text-[10px] font-extrabold text-black leading-none truncate max-w-[80px]">
+                  <span className="text-[10px] font-extrabold text-espresso leading-none truncate max-w-[80px]">
                     {adminUser.name.split(' ')[0]}
                   </span>
                   <button
                     onClick={onLogout}
-                    className="text-[9px] text-red-600 hover:text-red-700 font-bold uppercase tracking-wider text-left hover:underline mt-0.5 cursor-pointer"
+                    className="text-[9px] text-terracotta hover:text-terracotta-dark font-bold uppercase tracking-wider text-left hover:underline mt-0.5 cursor-pointer"
                   >
                     Sign Out
                   </button>
@@ -156,12 +156,12 @@ export default function Header({
             {/* Shopping Cart Indicator */}
             <button
               onClick={onCartToggle}
-              className="relative p-2.5 hover:bg-gray-50 rounded-full transition-colors cursor-pointer"
+              className="relative p-2.5 hover:bg-ivory-dark/40 rounded-full transition-colors cursor-pointer"
               id="cart-indicator-button"
             >
-              <ShoppingBag className="w-6 h-6 text-black" />
+              <ShoppingBag className="w-6 h-6 text-espresso" />
               {cartCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 bg-black text-white font-mono text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full animate-bounce">
+                <span className="absolute -top-0.5 -right-0.5 bg-terracotta text-ivory font-mono text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full animate-bounce shadow-xs">
                   {cartCount}
                 </span>
               )}
@@ -170,7 +170,7 @@ export default function Header({
             {/* Mobile Menu Icon */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="md:hidden p-2 text-gray-600 hover:text-black hover:bg-gray-50 rounded-lg transition-all"
+              className="md:hidden p-2 text-espresso hover:bg-ivory-dark/40 rounded-lg transition-all"
               id="mobile-menu-toggle"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -182,15 +182,15 @@ export default function Header({
 
       {/* Desktop Sub-navigation (Category Filter Pills) */}
       {!isAdminMode && (
-        <div className="bg-gray-50 border-t border-b border-gray-100 hidden md:block" id="desktop-sub-nav">
+        <div className="bg-ivory-dark/25 border-t border-b border-ivory-dark hidden md:block" id="desktop-sub-nav">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <nav className="flex space-x-1 py-3 overflow-x-auto scrollbar-none">
+            <nav className="flex space-x-2 py-2.5 overflow-x-auto scrollbar-none">
               <button
                 onClick={() => setActiveCategory('all')}
-                className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap cursor-pointer ${
+                className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap cursor-pointer ${
                   activeCategory === 'all'
-                    ? 'bg-black text-white shadow-xs'
-                    : 'text-gray-600 hover:bg-white hover:text-black'
+                    ? 'bg-espresso text-ivory shadow-xs'
+                    : 'bg-white/60 text-espresso-soft hover:bg-white hover:text-espresso border border-ivory-dark/50'
                 }`}
                 id="cat-pill-all"
               >
@@ -200,10 +200,10 @@ export default function Header({
                 <button
                   key={cat.id}
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors whitespace-nowrap cursor-pointer ${
+                  className={`px-4 py-1.5 rounded-full text-xs font-bold tracking-wide transition-all whitespace-nowrap cursor-pointer ${
                     activeCategory === cat.id
-                      ? 'bg-black text-white shadow-xs'
-                      : 'text-gray-600 hover:bg-white hover:text-black'
+                      ? 'bg-espresso text-ivory shadow-xs'
+                      : 'bg-white/60 text-espresso-soft hover:bg-white hover:text-espresso border border-ivory-dark/50'
                   }`}
                   id={`cat-pill-${cat.id}`}
                 >
@@ -217,7 +217,7 @@ export default function Header({
 
       {/* Mobile Menu Dropdown */}
       {mobileMenuOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 px-4 pt-2 pb-6 space-y-4 shadow-lg animate-fadeIn" id="mobile-dropdown-menu">
+        <div className="md:hidden bg-ivory border-t border-ivory-dark px-4 pt-2 pb-6 space-y-4 shadow-lg animate-fadeIn" id="mobile-dropdown-menu">
           
           {/* Mobile Search */}
           <div className="relative mt-2">
@@ -226,10 +226,10 @@ export default function Header({
               placeholder={t('search.placeholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-gray-50 border border-gray-200 rounded-full py-2 pl-4 pr-10 text-sm focus:outline-hidden focus:ring-1 focus:ring-black"
+              className="w-full bg-white border border-ivory-dark rounded-full py-2 pl-4 pr-10 text-sm text-espresso placeholder-espresso-soft/60 focus:outline-hidden focus:ring-1 focus:ring-terracotta"
               id="search-input-mobile"
             />
-            <div className="absolute right-3 top-2.5 text-gray-400">
+            <div className="absolute right-3 top-2.5 text-espresso-soft">
               <Search className="w-4 h-4" />
             </div>
           </div>
@@ -237,7 +237,7 @@ export default function Header({
           {/* Categories Title */}
           {!isAdminMode && (
             <div>
-              <p className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 pl-1">
+              <p className="text-xs font-bold text-espresso-soft uppercase tracking-widest mb-2 pl-1">
                 {t('nav.categories')}
               </p>
               <div className="flex flex-col space-y-1">
@@ -246,8 +246,8 @@ export default function Header({
                     setActiveCategory('all');
                     setMobileMenuOpen(false);
                   }}
-                  className={`text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                    activeCategory === 'all' ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-50'
+                  className={`text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                    activeCategory === 'all' ? 'bg-espresso text-ivory' : 'text-espresso-soft hover:bg-ivory-dark/30'
                   }`}
                   id="cat-mobile-all"
                 >
@@ -260,8 +260,8 @@ export default function Header({
                       setActiveCategory(cat.id);
                       setMobileMenuOpen(false);
                     }}
-                    className={`text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
-                      activeCategory === cat.id ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-50'
+                    className={`text-left px-3 py-2 rounded-lg text-xs font-bold transition-colors cursor-pointer ${
+                      activeCategory === cat.id ? 'bg-espresso text-ivory' : 'text-espresso-soft hover:bg-ivory-dark/30'
                     }`}
                     id={`cat-mobile-${cat.id}`}
                   >
@@ -273,20 +273,20 @@ export default function Header({
           )}
 
           {/* Language and Admin Actions */}
-          <div className="pt-2 border-t border-gray-100 flex flex-col space-y-2">
+          <div className="pt-2 border-t border-ivory-dark flex flex-col space-y-2">
             <button
               onClick={() => {
                 setLanguage(currentLanguage === 'en' ? 'am' : 'en');
                 setMobileMenuOpen(false);
               }}
-              className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-gray-50 text-sm font-medium text-gray-700"
+              className="flex items-center justify-between px-3 py-2 rounded-lg hover:bg-ivory-dark/30 text-xs font-bold text-espresso"
               id="lang-toggle-mobile"
             >
               <span className="flex items-center space-x-2">
-                <Globe className="w-4 h-4 text-gray-400" />
+                <Globe className="w-4 h-4 text-terracotta" />
                 <span>Language / ቋንቋ</span>
               </span>
-              <span className="text-xs bg-gray-100 px-2.5 py-1 rounded-full font-bold">
+              <span className="text-[10px] bg-ivory-dark px-2.5 py-1 rounded-full font-bold text-espresso">
                 {currentLanguage === 'en' ? 'አማርኛ' : 'English'}
               </span>
             </button>

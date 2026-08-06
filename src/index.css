@@ -1,6 +1,51 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Manrope:wght@400;500;600;700;800&display=swap');
+
+@theme {
+  --font-serif: 'Fraunces', serif;
+  --font-sans: 'Manrope', sans-serif;
+
+  --color-ivory: #F6F1E7;
+  --color-ivory-dark: #E3D9C6;
+  --color-espresso: #2B2119;
+  --color-espresso-soft: #6B5D4C;
+  --color-terracotta: #B5592B;
+  --color-terracotta-dark: #8A421D;
+  --color-ochre: #C99A3A;
+  --color-ochre-soft: #EFE2C8;
+  --color-forest: #3F5C3E;
+}
+
+body {
+  background-color: #F6F1E7;
+  color: #2B2119;
+  font-family: 'Manrope', sans-serif;
+}
 
 @layer utilities {
+  .font-fraunces {
+    font-family: 'Fraunces', serif;
+  }
+  .font-manrope {
+    font-family: 'Manrope', sans-serif;
+  }
+
+  .tibeb-strip {
+    height: 6px;
+    width: 100%;
+    background: repeating-linear-gradient(
+      135deg,
+      #B5592B,
+      #B5592B 12px,
+      #C99A3A 12px,
+      #C99A3A 24px,
+      #3F5C3E 24px,
+      #3F5C3E 36px,
+      #EFE2C8 36px,
+      #EFE2C8 44px
+    );
+  }
+
   /* Hide scrollbar for Chrome, Safari and Opera */
   .scrollbar-none::-webkit-scrollbar {
     display: none;
@@ -38,3 +83,42 @@
 .animate-scaleUp {
   animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+@keyframes cinematicOrbitZoom {
+  0% {
+    transform: scale(1.02) rotate(0deg) translate(0px, 0px);
+  }
+  25% {
+    transform: scale(1.15) rotate(1.2deg) translate(-8px, -6px);
+  }
+  50% {
+    transform: scale(1.25) rotate(0deg) translate(0px, -10px);
+  }
+  75% {
+    transform: scale(1.10) rotate(-1.2deg) translate(6px, -4px);
+  }
+  100% {
+    transform: scale(1.02) rotate(0deg) translate(0px, 0px);
+  }
+}
+
+@keyframes orbitRotate3D {
+  0% {
+    transform: perspective(1200px) rotateY(-4deg) rotateX(2deg);
+  }
+  50% {
+    transform: perspective(1200px) rotateY(4deg) rotateX(-2deg);
+  }
+  100% {
+    transform: perspective(1200px) rotateY(-4deg) rotateX(2deg);
+  }
+}
+
+.animate-cinematic-camera {
+  animation: cinematicOrbitZoom 22s ease-in-out infinite;
+}
+
+.animate-orbit-3d {
+  animation: orbitRotate3D 18s ease-in-out infinite;
+}
+

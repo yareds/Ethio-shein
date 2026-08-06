@@ -5,6 +5,7 @@ import ProductCard from './components/ProductCard';
 import ProductDetailModal from './components/ProductDetailModal';
 import CartDrawer from './components/CartDrawer';
 import AdminDashboard from './components/AdminDashboard';
+import Testimonials from './components/Testimonials';
 import SEOContent from './components/SEOContent';
 import LoginModal from './components/LoginModal';
 import { 
@@ -225,7 +226,6 @@ export default function App() {
 
     // 3. Deduct product inventory count automatically
     const updatedProducts = products.map(p => {
-      // Accumulate all quantities purchased of this specific product across different sizes/colors
       const quantityPurchased = cartItems
         .filter(item => item.product.id === p.id)
         .reduce((sum, item) => sum + item.quantity, 0);
@@ -241,10 +241,6 @@ export default function App() {
 
     setProducts(updatedProducts);
     saveStoredProducts(updatedProducts);
-
-    // 4. Cart remains populated with items so the drawer can show redirection panel.
-    // However, on reset or closing of the redirection panel (inside CartDrawer),
-    // the cart gets officially cleared from both state and storage.
   };
 
   // Reset/Empty cart helper called when the user finishes viewing success redirection screen
@@ -268,21 +264,15 @@ export default function App() {
     selectedColor: string = 'Standard',
     quantity: number = 1
   ) => {
-    // 1. Temporarily place item inside cart
     setCartItems([{ product, selectedSize, selectedColor, quantity }]);
-    // 2. Open cart drawer so user can fill checkout form instantly
     setCartDrawerOpen(true);
-    // 3. Close product detail modal for cleaner flow
     setActiveProduct(null);
   };
 
   // --- FILTERED CATALOG DATA ---
   const filteredProducts = useMemo(() => {
     return products.filter(p => {
-      // Category filter
       const matchesCategory = activeCategory === 'all' || p.categoryId === activeCategory;
-      
-      // Search query filter
       const query = searchQuery.trim().toLowerCase();
       const matchesSearch = !query || 
         p.name.toLowerCase().includes(query) ||
@@ -299,7 +289,7 @@ export default function App() {
   }, [cartItems]);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col font-sans text-gray-900" id="ethioshein-root">
+    <div className="min-h-screen bg-ivory flex flex-col font-sans text-espresso" id="ethioshein-root">
       
       {/* 1. Universal Responsive Header */}
       <Header
@@ -357,27 +347,27 @@ export default function App() {
               <div className="space-y-6">
                 
                 {/* Search result summary / headers */}
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-gray-100 pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-ivory-dark pb-4">
                   <div>
-                    <h2 className="text-xl sm:text-2xl font-sans font-black text-black">
+                    <h2 className="text-2xl sm:text-3xl font-fraunces font-bold text-espresso">
                       {activeCategory === 'all' 
                         ? (currentLanguage === 'en' ? 'Latest Collections' : 'አዳዲስ ስብስቦች')
                         : categories.find(c => c.id === activeCategory)?.name}
                     </h2>
                     {searchQuery && (
-                      <p className="text-xs text-gray-500 mt-1">
-                        Showing {filteredProducts.length} results for "<strong className="text-black">{searchQuery}</strong>"
+                      <p className="text-xs text-espresso-soft mt-1">
+                        Showing {filteredProducts.length} results for "<strong className="text-espresso">{searchQuery}</strong>"
                       </p>
                     )}
                   </div>
 
                   {/* Top categories select dropdown for quick filter on mobile */}
                   <div className="flex items-center space-x-2 md:hidden">
-                    <Filter className="w-4 h-4 text-gray-400" />
+                    <Filter className="w-4 h-4 text-espresso-soft" />
                     <select
                       value={activeCategory}
                       onChange={(e) => setActiveCategory(e.target.value)}
-                      className="bg-white border border-gray-200 rounded-xl px-3 py-1.5 text-xs font-bold text-gray-700"
+                      className="bg-white border border-ivory-dark rounded-xl px-3 py-1.5 text-xs font-bold text-espresso"
                     >
                       <option value="all">{currentLanguage === 'en' ? 'All Fashion' : 'ሁሉንም ፋሽን'}</option>
                       {categories.map(c => (
@@ -389,15 +379,15 @@ export default function App() {
 
                 {/* Main Product Grid */}
                 {filteredProducts.length === 0 ? (
-                  <div className="text-center py-20 bg-white border border-gray-100 rounded-3xl p-8 max-w-lg mx-auto" id="no-results-screen">
-                    <p className="font-bold text-gray-900 text-sm mb-1">No items found matching your filters.</p>
-                    <p className="text-xs text-gray-400 mb-4">Try searching different keywords or selecting other categories.</p>
+                  <div className="text-center py-20 bg-white border border-ivory-dark rounded-3xl p-8 max-w-lg mx-auto shadow-xs" id="no-results-screen">
+                    <p className="font-bold text-espresso text-sm mb-1">No items found matching your filters.</p>
+                    <p className="text-xs text-espresso-soft mb-4">Try searching different keywords or selecting other categories.</p>
                     <button
                       onClick={() => {
                         setSearchQuery('');
                         setActiveCategory('all');
                       }}
-                      className="bg-black hover:bg-gray-800 text-white text-xs font-bold px-4 py-2 rounded-xl"
+                      className="bg-espresso hover:bg-terracotta-dark text-ivory text-xs font-bold px-4 py-2.5 rounded-xl transition-all cursor-pointer"
                     >
                       Reset Filters
                     </button>
@@ -423,6 +413,9 @@ export default function App() {
               </div>
             </div>
 
+            {/* Trust Features & Customer Reviews Testimonials Section */}
+            <Testimonials currentLanguage={currentLanguage} />
+
             {/* Crawlable, SEO Rich Localized Content with FAQs */}
             <SEOContent currentLanguage={currentLanguage} />
 
@@ -431,19 +424,19 @@ export default function App() {
       </main>
 
       {/* 3. Universal Footer */}
-      <footer className="bg-black text-gray-400 py-12 border-t border-gray-850" id="universal-footer">
+      <footer className="bg-espresso text-ivory-dark/80 py-12 border-t border-ivory-dark" id="universal-footer">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="space-y-4">
-            <span className="font-sans font-black text-xl text-white tracking-widest">
-              ETHIO<span className="text-gray-400 font-normal">SHEIN</span>
+            <span className="font-sans font-black text-xl text-ivory tracking-widest">
+              ETHIO<span className="text-terracotta font-medium">SHEIN</span>
             </span>
-            <p className="text-xs leading-relaxed">
+            <p className="text-xs leading-relaxed text-ivory-dark/70">
               Premium fashion marketplace inspired by global fast fashion, custom-tailored for the modern lifestyle of Ethiopia. Secure shopping with cash-on-delivery.
             </p>
           </div>
           <div>
-            <h4 className="text-white text-xs font-bold uppercase tracking-widest mb-4">Regional Hubs</h4>
-            <ul className="text-xs space-y-2">
+            <h4 className="text-ivory text-xs font-fraunces font-bold uppercase tracking-widest mb-4">Regional Hubs</h4>
+            <ul className="text-xs space-y-2 text-ivory-dark/70">
               <li>Addis Ababa (Bole, Shiro Meda)</li>
               <li>Hawassa City Center</li>
               <li>Bahir Dar (Lake Tana)</li>
@@ -451,35 +444,35 @@ export default function App() {
             </ul>
           </div>
           <div>
-            <h4 className="text-white text-xs font-bold uppercase tracking-widest mb-4">Helpful Links</h4>
-            <ul className="text-xs space-y-2">
-              <li><button onClick={() => { if (adminUser && adminUser.email.toLowerCase() === 'yared.abegaz@gmail.com') { setIsAdminMode(true); } else { setLoginModalOpen(true); } }} className="hover:text-white cursor-pointer text-left">Admin Portal</button></li>
-              <li><button onClick={() => { setActiveCategory('all'); setIsAdminMode(false); }} className="hover:text-white cursor-pointer text-left">Latest Catalog</button></li>
-              <li><button onClick={() => setLanguage(currentLanguage === 'en' ? 'am' : 'en')} className="hover:text-white cursor-pointer text-left">አማርኛ / Switch Language</button></li>
+            <h4 className="text-ivory text-xs font-fraunces font-bold uppercase tracking-widest mb-4">Helpful Links</h4>
+            <ul className="text-xs space-y-2 text-ivory-dark/70">
+              <li><button onClick={() => { if (adminUser && adminUser.email.toLowerCase() === 'yared.abegaz@gmail.com') { setIsAdminMode(true); } else { setLoginModalOpen(true); } }} className="hover:text-ivory cursor-pointer text-left">Admin Portal</button></li>
+              <li><button onClick={() => { setActiveCategory('all'); setIsAdminMode(false); }} className="hover:text-ivory cursor-pointer text-left">Latest Catalog</button></li>
+              <li><button onClick={() => setLanguage(currentLanguage === 'en' ? 'am' : 'en')} className="hover:text-ivory cursor-pointer text-left">አማርኛ / Switch Language</button></li>
             </ul>
           </div>
           <div className="space-y-3">
-            <h4 className="text-white text-xs font-bold uppercase tracking-widest mb-4">Customer Care</h4>
-            <p className="text-xs">Have questions or want to order directly? Chat with us now:</p>
+            <h4 className="text-ivory text-xs font-fraunces font-bold uppercase tracking-widest mb-4">Customer Care</h4>
+            <p className="text-xs text-ivory-dark/70">Have questions or want to order directly? Chat with us now:</p>
             <div className="flex space-x-2">
               <a 
                 href="https://t.me/EthioSheinSupport" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1"
+                className="bg-ivory-dark/20 hover:bg-terracotta text-ivory text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 border border-ivory-dark/30 transition-colors"
               >
                 <span>Telegram Chat</span>
               </a>
               <a 
                 href="tel:+251911223344" 
-                className="bg-white/10 hover:bg-white/20 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1"
+                className="bg-ivory-dark/20 hover:bg-forest text-ivory text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 border border-ivory-dark/30 transition-colors"
               >
                 <span>Call Us</span>
               </a>
             </div>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-gray-800 mt-8 pt-6 text-center text-[10px] text-gray-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 border-t border-ivory-dark/30 mt-8 pt-6 text-center text-[10px] text-ivory-dark/50">
           <p>&copy; {new Date().getFullYear()} EthioShein Fashion Marketplace. All rights reserved. Locally crafted in Addis Ababa, Ethiopia.</p>
         </div>
       </footer>

@@ -123,20 +123,20 @@ export default function CartDrawer({
       <div className="absolute inset-0 bg-black/50 backdrop-blur-xs transition-opacity" onClick={onClose}></div>
 
       <div className="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10">
-        <div className="pointer-events-auto w-screen max-w-md transform bg-white shadow-2xl transition-all duration-300 flex flex-col h-full animate-slideLeft">
+        <div className="pointer-events-auto w-screen max-w-md transform bg-ivory border-l border-ivory-dark shadow-2xl transition-all duration-300 flex flex-col h-full animate-slideLeft text-espresso">
           
           {/* Header */}
-          <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
-            <h2 className="text-lg font-sans font-black text-black flex items-center space-x-2">
-              <ShoppingBag className="w-5 h-5 text-black" />
+          <div className="px-6 py-5 border-b border-ivory-dark flex items-center justify-between bg-white/50">
+            <h2 className="text-lg font-fraunces font-bold text-espresso flex items-center space-x-2">
+              <ShoppingBag className="w-5 h-5 text-espresso" />
               <span>{t('nav.cart')}</span>
-              <span className="font-mono text-xs bg-black text-white px-2 py-0.5 rounded-full">
+              <span className="font-mono text-xs bg-espresso text-ivory px-2 py-0.5 rounded-full">
                 {cartItems.length}
               </span>
             </h2>
             <button
               onClick={onClose}
-              className="p-1.5 rounded-lg text-gray-400 hover:text-black hover:bg-gray-50 transition-colors cursor-pointer"
+              className="p-1.5 rounded-lg text-espresso-soft hover:text-espresso hover:bg-ivory-dark/30 transition-colors cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -147,41 +147,41 @@ export default function CartDrawer({
             {formSubmitted ? (
               /* ORDER REDIRECT CONFIRMATION MODAL STATE */
               <div className="space-y-6 text-center py-6 animate-scaleUp" id="order-success-screen">
-                <div className="w-16 h-16 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto shadow-xs">
-                  <Check className="w-8 h-8" />
+                <div className="w-16 h-16 bg-forest/10 text-forest rounded-full flex items-center justify-center mx-auto shadow-xs border border-forest/20">
+                  <Check className="w-8 h-8 text-forest" />
                 </div>
 
                 <div className="space-y-2">
-                  <h3 className="text-xl font-black text-black">
+                  <h3 className="text-xl font-fraunces font-bold text-espresso">
                     {currentLanguage === 'en' ? 'Inquiry Processed!' : 'ትዕዛዝዎ ተመዝግቧል!'}
                   </h3>
-                  <p className="text-xs text-gray-500 px-4">
+                  <p className="text-xs text-espresso-soft px-4">
                     {t('cart.successMsg')}
                   </p>
                 </div>
 
                 {/* Text Message Preview */}
-                <div className="bg-gray-50 border border-gray-200 rounded-2xl p-4 text-left space-y-3 relative">
-                  <span className="absolute top-2.5 right-2.5 text-[9px] font-bold text-gray-400 uppercase tracking-widest bg-white border border-gray-100 px-2 py-0.5 rounded-md">
+                <div className="bg-white border border-ivory-dark rounded-2xl p-4 text-left space-y-3 relative shadow-xs">
+                  <span className="absolute top-2.5 right-2.5 text-[9px] font-bold text-espresso-soft uppercase tracking-widest bg-ivory border border-ivory-dark px-2 py-0.5 rounded-md">
                     Order Text
                   </span>
-                  <pre className="text-xs font-mono text-gray-700 whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto select-all">
+                  <pre className="text-xs font-mono text-espresso whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto select-all">
                     {formattedMessage}
                   </pre>
                   
                   {/* Copy to Clipboard */}
                   <button
                     onClick={copyToClipboard}
-                    className="w-full bg-white border border-gray-200 hover:border-black text-black font-semibold text-xs py-2 px-3 rounded-lg flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-xs"
+                    className="w-full bg-ivory border border-ivory-dark hover:border-espresso text-espresso font-semibold text-xs py-2 px-3 rounded-lg flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-xs"
                   >
                     {isCopied ? (
                       <>
-                        <Check className="w-4 h-4 text-green-600" />
-                        <span className="text-green-600">Copied to Clipboard!</span>
+                        <Check className="w-4 h-4 text-forest" />
+                        <span className="text-forest font-bold">Copied to Clipboard!</span>
                       </>
                     ) : (
                       <>
-                        <Clipboard className="w-4 h-4" />
+                        <Clipboard className="w-4 h-4 text-espresso-soft" />
                         <span>Copy Order Text</span>
                       </>
                     )}
@@ -195,7 +195,7 @@ export default function CartDrawer({
                       href={redirectLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-md transition-all cursor-pointer"
+                      className="w-full bg-[#0088cc] hover:bg-[#0077b5] text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-md transition-all cursor-pointer"
                       id="telegram-redirect-cta"
                     >
                       <Send className="w-4 h-4 text-white" />
@@ -209,10 +209,10 @@ export default function CartDrawer({
                       href={redirectLink}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-md transition-all cursor-pointer"
+                      className="w-full bg-forest hover:bg-[#2e452d] text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-md transition-all cursor-pointer"
                       id="whatsapp-redirect-cta"
                     >
-                      <MessageSquare className="w-4 h-4" />
+                      <MessageSquare className="w-4 h-4 text-white" />
                       <span>Open WhatsApp & Send</span>
                       <ChevronRight className="w-4 h-4" />
                     </a>
@@ -221,7 +221,7 @@ export default function CartDrawer({
                   {submittedChannel === 'phone' && (
                     <a
                       href={redirectLink}
-                      className="w-full bg-gray-900 hover:bg-black text-white font-bold py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-md transition-all cursor-pointer"
+                      className="w-full bg-espresso hover:bg-espresso-soft text-ivory font-bold py-3.5 px-4 rounded-xl flex items-center justify-center space-x-2 shadow-md transition-all cursor-pointer"
                       id="phone-redirect-cta"
                     >
                       <Phone className="w-4 h-4" />
@@ -232,7 +232,7 @@ export default function CartDrawer({
 
                   <button
                     onClick={handleResetAndClose}
-                    className="w-full bg-gray-50 hover:bg-gray-100 text-gray-700 font-bold py-2.5 px-4 rounded-xl text-xs transition-all cursor-pointer"
+                    className="w-full bg-white hover:bg-ivory-dark/30 text-espresso border border-ivory-dark font-bold py-2.5 px-4 rounded-xl text-xs transition-all cursor-pointer"
                   >
                     Close & Keep Shopping
                   </button>
@@ -241,15 +241,15 @@ export default function CartDrawer({
             ) : cartItems.length === 0 ? (
               /* CART EMPTY STATE */
               <div className="text-center py-16 space-y-4" id="cart-empty-screen">
-                <div className="w-16 h-16 bg-gray-50 border border-gray-100 rounded-full flex items-center justify-center mx-auto shadow-xs text-gray-400">
-                  <ShoppingBag className="w-8 h-8" />
+                <div className="w-16 h-16 bg-white border border-ivory-dark rounded-full flex items-center justify-center mx-auto shadow-xs text-espresso-soft">
+                  <ShoppingBag className="w-8 h-8 text-espresso-soft" />
                 </div>
                 <div className="space-y-1">
-                  <p className="font-bold text-gray-900 text-sm">{t('cart.empty')}</p>
+                  <p className="font-bold text-espresso text-sm">{t('cart.empty')}</p>
                 </div>
                 <button
                   onClick={onClose}
-                  className="bg-black hover:bg-gray-800 text-white font-bold text-xs px-5 py-2.5 rounded-lg shadow-sm transition-all cursor-pointer"
+                  className="bg-espresso hover:bg-terracotta-dark text-ivory font-bold text-xs px-5 py-2.5 rounded-lg shadow-xs transition-all cursor-pointer"
                 >
                   Start Exploring
                 </button>
@@ -259,46 +259,46 @@ export default function CartDrawer({
               <div className="space-y-6" id="cart-items-screen">
                 {/* List of Cart Items */}
                 <div className="space-y-4">
-                  {cartItems.map((item, idx) => (
+                  {cartItems.map((item) => (
                     <div 
                       key={`${item.product.id}-${item.selectedSize}-${item.selectedColor}`}
-                      className="flex items-center space-x-4 border-b border-gray-100 pb-4"
+                      className="flex items-center space-x-4 border-b border-ivory-dark pb-4"
                       id={`cart-item-${item.product.id}`}
                     >
                       {/* Thumbnail */}
-                      <div className="w-16 h-20 rounded-xl overflow-hidden bg-gray-50 border border-gray-150 shrink-0">
+                      <div className="w-16 h-20 rounded-xl overflow-hidden bg-white border border-ivory-dark shrink-0">
                         <img src={item.product.images[0]} alt="" className="w-full h-full object-cover" referrerPolicy="no-referrer" />
                       </div>
 
                       {/* Info & Adjusters */}
                       <div className="flex-1 min-w-0 space-y-1">
-                        <h4 className="text-sm font-bold text-gray-900 line-clamp-1">{item.product.name}</h4>
-                        <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-wider">
-                          {t('product.size')}: <span className="text-gray-700">{item.selectedSize}</span> | {t('product.color')}: <span className="text-gray-700">{item.selectedColor}</span>
+                        <h4 className="text-sm font-bold text-espresso line-clamp-1">{item.product.name}</h4>
+                        <p className="text-[10px] text-espresso-soft font-semibold uppercase tracking-wider">
+                          {t('product.size')}: <span className="text-espresso">{item.selectedSize}</span> | {t('product.color')}: <span className="text-espresso">{item.selectedColor}</span>
                         </p>
                         
                         <div className="flex items-center justify-between pt-1">
                           {/* Quantity Incrementor */}
-                          <div className="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-white">
+                          <div className="flex items-center border border-ivory-dark rounded-lg overflow-hidden bg-white">
                             <button
                               onClick={() => onUpdateQuantity(item.product.id, item.selectedSize, item.selectedColor, item.quantity - 1)}
-                              className="px-2 py-0.5 hover:bg-gray-50 text-gray-600 font-bold text-xs"
+                              className="px-2 py-0.5 hover:bg-ivory text-espresso font-bold text-xs"
                             >
                               -
                             </button>
-                            <span className="px-2 py-0.5 font-mono text-xs font-bold text-black bg-gray-50">
+                            <span className="px-2 py-0.5 font-mono text-xs font-bold text-espresso bg-ivory">
                               {item.quantity}
                             </span>
                             <button
                               onClick={() => onUpdateQuantity(item.product.id, item.selectedSize, item.selectedColor, item.quantity + 1)}
-                              className="px-2 py-0.5 hover:bg-gray-50 text-gray-600 font-bold text-xs"
+                              className="px-2 py-0.5 hover:bg-ivory text-espresso font-bold text-xs"
                             >
                               +
                             </button>
                           </div>
 
                           {/* Price */}
-                          <span className="text-sm font-mono font-bold text-black">
+                          <span className="text-sm font-mono font-bold text-terracotta">
                             {(item.product.price * item.quantity).toLocaleString()} {t('product.price')}
                           </span>
                         </div>
@@ -307,7 +307,7 @@ export default function CartDrawer({
                       {/* Remove Button */}
                       <button
                         onClick={() => onRemoveItem(item.product.id, item.selectedSize, item.selectedColor)}
-                        className="p-1 text-gray-400 hover:text-red-500 transition-colors shrink-0"
+                        className="p-1 text-espresso-soft hover:text-terracotta transition-colors shrink-0"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -316,24 +316,24 @@ export default function CartDrawer({
                 </div>
 
                 {/* Subtotal summary */}
-                <div className="bg-gray-50 rounded-2xl p-4 border border-gray-100 space-y-2">
+                <div className="bg-white rounded-2xl p-4 border border-ivory-dark space-y-2 shadow-xs">
                   <div className="flex justify-between items-baseline">
-                    <span className="text-xs text-gray-500 font-bold uppercase tracking-widest">{t('cart.total')}</span>
-                    <span className="text-xl font-mono font-black text-black">
+                    <span className="text-xs text-espresso-soft font-bold uppercase tracking-widest">{t('cart.total')}</span>
+                    <span className="text-xl font-mono font-black text-terracotta">
                       {cartTotal.toLocaleString()} {t('product.price')}
                     </span>
                   </div>
-                  <div className="flex justify-between items-center text-[11px] text-green-600 font-semibold bg-green-50 px-2 py-1 rounded-md">
+                  <div className="flex justify-between items-center text-[11px] text-forest font-semibold bg-forest/10 border border-forest/20 px-2.5 py-1 rounded-md">
                     <span>Payment Method:</span>
                     <span>Direct Call / Messaging Checkout</span>
                   </div>
                 </div>
 
                 {/* Localized Shopping Checkout Form */}
-                <div className="border-t border-gray-100 pt-6 space-y-4" id="checkout-form-container">
+                <div className="border-t border-ivory-dark pt-6 space-y-4" id="checkout-form-container">
                   <div className="space-y-1">
-                    <h3 className="text-sm font-black text-black uppercase tracking-wider">{t('cart.checkoutHeader')}</h3>
-                    <p className="text-[11px] text-gray-400 leading-normal">
+                    <h3 className="text-sm font-fraunces font-bold text-espresso uppercase tracking-wider">{t('cart.checkoutHeader')}</h3>
+                    <p className="text-[11px] text-espresso-soft leading-normal">
                       {t('cart.checkoutSub')}
                     </p>
                   </div>
@@ -341,7 +341,7 @@ export default function CartDrawer({
                   <div className="space-y-3">
                     {/* Customer Name */}
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-700 flex items-center justify-between">
+                      <label className="text-xs font-bold text-espresso flex items-center justify-between">
                         <span>{t('cart.customerName')} *</span>
                       </label>
                       <input
@@ -349,7 +349,7 @@ export default function CartDrawer({
                         value={customerName}
                         onChange={(e) => setCustomerName(e.target.value)}
                         placeholder="e.g. Yordanos Bekele"
-                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-hidden focus:ring-1 focus:ring-black focus:border-black"
+                        className="w-full bg-white border border-ivory-dark rounded-xl px-3 py-2 text-sm text-espresso focus:outline-hidden focus:ring-1 focus:ring-terracotta focus:border-terracotta"
                         required
                         id="form-customer-name"
                       />
@@ -357,7 +357,7 @@ export default function CartDrawer({
 
                     {/* Customer Phone */}
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-700">
+                      <label className="text-xs font-bold text-espresso">
                         {t('cart.customerPhone')} *
                       </label>
                       <input
@@ -365,7 +365,7 @@ export default function CartDrawer({
                         value={customerPhone}
                         onChange={(e) => setCustomerPhone(e.target.value)}
                         placeholder="e.g. 0911223344"
-                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-hidden focus:ring-1 focus:ring-black focus:border-black"
+                        className="w-full bg-white border border-ivory-dark rounded-xl px-3 py-2 text-sm text-espresso focus:outline-hidden focus:ring-1 focus:ring-terracotta focus:border-terracotta"
                         required
                         id="form-customer-phone"
                       />
@@ -373,13 +373,13 @@ export default function CartDrawer({
 
                     {/* Customer Location City */}
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-700">
+                      <label className="text-xs font-bold text-espresso">
                         {t('cart.customerCity')} *
                       </label>
                       <select
                         value={customerCity}
                         onChange={(e) => setCustomerCity(e.target.value)}
-                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-hidden focus:ring-1 focus:ring-black focus:border-black"
+                        className="w-full bg-white border border-ivory-dark rounded-xl px-3 py-2 text-sm text-espresso focus:outline-hidden focus:ring-1 focus:ring-terracotta focus:border-terracotta"
                         required
                         id="form-customer-city"
                       >
@@ -392,7 +392,7 @@ export default function CartDrawer({
 
                     {/* Special Notes */}
                     <div className="space-y-1">
-                      <label className="text-xs font-bold text-gray-700">
+                      <label className="text-xs font-bold text-espresso">
                         {t('cart.orderNotes')}
                       </label>
                       <textarea
@@ -400,7 +400,7 @@ export default function CartDrawer({
                         onChange={(e) => setOrderNotes(e.target.value)}
                         rows={2}
                         placeholder="Specify custom sizes, woven patterns, or delivery timelines..."
-                        className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-hidden focus:ring-1 focus:ring-black focus:border-black"
+                        className="w-full bg-white border border-ivory-dark rounded-xl px-3 py-2 text-sm text-espresso focus:outline-hidden focus:ring-1 focus:ring-terracotta focus:border-terracotta"
                         id="form-customer-notes"
                       ></textarea>
                     </div>
@@ -410,25 +410,25 @@ export default function CartDrawer({
                   <div className="space-y-2 pt-2">
                     <button
                       onClick={() => handleFormSubmit('telegram')}
-                      className="w-full bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-xs cursor-pointer transition-all"
+                      className="w-full bg-[#0088cc] hover:bg-[#0077b5] text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-xs cursor-pointer transition-all"
                       id="checkout-telegram-button"
                     >
-                      <Send className="w-4 h-4 fill-white text-sky-500" />
+                      <Send className="w-4 h-4 fill-white text-[#0088cc]" />
                       <span>{t('cart.sendTelegram')}</span>
                     </button>
 
                     <button
                       onClick={() => handleFormSubmit('whatsapp')}
-                      className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-xs cursor-pointer transition-all"
+                      className="w-full bg-forest hover:bg-[#2e452d] text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-xs cursor-pointer transition-all"
                       id="checkout-whatsapp-button"
                     >
-                      <MessageSquare className="w-4 h-4 fill-white text-green-500" />
+                      <MessageSquare className="w-4 h-4 fill-white text-forest" />
                       <span>{t('cart.sendWhatsApp')}</span>
                     </button>
 
                     <button
                       onClick={() => handleFormSubmit('phone')}
-                      className="w-full bg-gray-900 hover:bg-black text-white font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-xs cursor-pointer transition-all"
+                      className="w-full bg-espresso hover:bg-espresso-soft text-ivory font-bold py-3 px-4 rounded-xl text-xs flex items-center justify-center space-x-2 shadow-xs cursor-pointer transition-all"
                       id="checkout-phone-button"
                     >
                       <Phone className="w-4 h-4" />

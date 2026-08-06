@@ -110,12 +110,12 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn" id="login-modal-overlay">
-      <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-gray-100 relative animate-scaleUp">
+      <div className="bg-ivory rounded-3xl max-w-md w-full p-6 sm:p-8 shadow-2xl border border-ivory-dark relative animate-scaleUp">
         
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute right-4 top-4 text-gray-400 hover:text-black p-1.5 rounded-full hover:bg-gray-50 transition-colors"
+          className="absolute right-4 top-4 text-espresso-soft hover:text-espresso p-1.5 rounded-full hover:bg-ivory-dark/40 transition-colors cursor-pointer"
           id="close-login-modal"
         >
           <X className="w-5 h-5" />
@@ -123,14 +123,14 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
 
         {/* Brand Shield Header */}
         <div className="text-center space-y-3 mb-8">
-          <div className="mx-auto w-12 h-12 bg-black text-white rounded-2xl flex items-center justify-center shadow-lg">
-            <Shield className="w-6 h-6 text-yellow-400" />
+          <div className="mx-auto w-12 h-12 bg-espresso text-ochre rounded-2xl flex items-center justify-center shadow-md">
+            <Shield className="w-6 h-6 text-ochre" />
           </div>
           <div>
-            <h3 className="font-sans font-black text-xl text-black uppercase tracking-tight">
+            <h3 className="font-fraunces font-bold text-xl text-espresso uppercase tracking-tight">
               {currentLanguage === 'en' ? 'Admin Portal Sign-In' : 'የአስተዳዳሪ ፖርታል መግቢያ'}
             </h3>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-espresso-soft mt-1">
               {currentLanguage === 'en' 
                 ? 'Authorized back-office credentials required.' 
                 : 'የተፈቀደላቸው የአስተዳዳሪ ምስክር ወረቀቶች ያስፈልጋሉ።'}
@@ -139,7 +139,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
         </div>
 
         {/* Description */}
-        <p className="text-xs sm:text-sm text-gray-600 text-center leading-relaxed mb-6">
+        <p className="text-xs sm:text-sm text-espresso-soft text-center leading-relaxed mb-6">
           {currentLanguage === 'en'
             ? 'Connect your Google Account to authorize back-office access. Only yared.abegaz@gmail.com is allowed to manage inventory, catalog categories, and customer orders.'
             : 'የአስተዳዳሪ ፖርታሉን ለመክፈት የጉግል አካውንትዎን ያገናኙ። "yared.abegaz@gmail.com" ብቻ ነው እቃዎችን፣ ካታሎጎችን እና የደንበኛ ትዕዛዞችን ማስተዳደር የሚችለው።'}
@@ -147,13 +147,13 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
 
         {/* Error Notification Banner */}
         {error && (
-          <div className="mb-6 p-4 bg-red-50 border border-red-100 rounded-2xl flex items-start space-x-3 text-red-700 animate-fadeIn" id="login-error-banner">
-            <AlertTriangle className="w-5 h-5 text-red-600 shrink-0 mt-0.5" />
+          <div className="mb-6 p-4 bg-terracotta/10 border border-terracotta/30 rounded-2xl flex items-start space-x-3 text-terracotta-dark animate-fadeIn" id="login-error-banner">
+            <AlertTriangle className="w-5 h-5 text-terracotta shrink-0 mt-0.5" />
             <div className="space-y-1">
               <h4 className="font-bold text-xs">
                 {currentLanguage === 'en' ? 'Authorization Failed' : 'ማረጋገጥ አልተቻለም'}
               </h4>
-              <p className="text-[11px] leading-relaxed text-red-600">{error}</p>
+              <p className="text-[11px] leading-relaxed text-terracotta-dark">{error}</p>
             </div>
           </div>
         )}
@@ -163,7 +163,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
           <button
             onClick={handleGoogleLogin}
             disabled={isConnecting}
-            className={`w-full flex items-center justify-center space-x-3 py-3 px-4 border border-gray-200 rounded-2xl shadow-sm bg-white hover:bg-gray-50 text-sm font-bold text-gray-800 transition-all cursor-pointer ${
+            className={`w-full flex items-center justify-center space-x-3 py-3 px-4 border border-ivory-dark rounded-2xl shadow-xs bg-white hover:border-espresso text-sm font-bold text-espresso transition-all cursor-pointer ${
               isConnecting ? 'opacity-60 cursor-not-allowed' : ''
             }`}
             id="google-signin-action-button"
@@ -196,7 +196,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
 
           <button
             onClick={onClose}
-            className="w-full py-2.5 text-xs font-bold text-gray-500 hover:text-black transition-colors"
+            className="w-full py-2.5 text-xs font-bold text-espresso-soft hover:text-espresso transition-colors cursor-pointer"
             id="cancel-login-action"
           >
             {currentLanguage === 'en' ? 'Back to Shopping' : 'ወደ ግብይት ተመለስ'}
