@@ -91,6 +91,21 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  // Re-fetch orders whenever adminUser transitions to signed-in admin
+  useEffect(() => {
+    if (adminUser) {
+      let isMounted = true;
+      getStoredOrders().then(fetchedOrds => {
+        if (isMounted) {
+          setOrders(fetchedOrds);
+        }
+      }).catch(err => {
+        console.error("Failed to re-fetch orders after admin login:", err);
+      });
+      return () => { isMounted = false; };
+    }
+  }, [adminUser]);
+
   const handleLogout = async () => {
     try {
       await signOut(auth);
