@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Shield, X, AlertTriangle } from 'lucide-react';
+import { signInWithPopup } from 'firebase/auth';
+import { auth, googleProvider } from '../services/firebase';
 import { AdminUser, Language } from '../types';
 import { translations } from '../services/localization';
 
@@ -16,94 +18,51 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
 
   if (!isOpen) return null;
 
-  const t = (key: string) => translations[currentLanguage][key] || key;
-
-  const handleGoogleLogin = () => {
+  const handleGoogleLogin = async () => {
     if (isConnecting) return;
     setError(null);
     setIsConnecting(true);
 
     try {
-      const google = (window as any).google;
-      if (!google || !google.accounts || !google.accounts.oauth2) {
+      const userCredential = await signInWithPopup(auth, googleProvider);
+      const firebaseUser = userCredential.user;
+
+      if (!firebaseUser.email) {
+        throw new Error('No email returned from Google authentication');
+      }
+
+      const user: AdminUser = {
+        email: firebaseUser.email,
+        name: firebaseUser.displayName || 'Admin User',
+        picture: firebaseUser.photoURL || undefined
+      };
+
+      // Strict admin check
+      if (user.email.toLowerCase() === 'yared.abegaz@gmail.com') {
+        onLoginSuccess(user);
+        setError(null);
+        onClose();
+      } else {
         setError(
           currentLanguage === 'en'
-            ? 'Google Sign-In is still loading. Please wait a moment and try again.'
-            : 'የጉግል መግቢያ አገልግሎት በመጫን ላይ ነው። እባክዎ ጥቂት ሰከንዶች ጠብቀው እንደገና ይሞክሩ።'
+            ? `Access Denied: "${user.email}" is not authorized. Only designated Administrators are allowed.`
+            : `መዳረሻ ተከልክሏል፡ "${user.email}" የአስተዳዳሪ ፈቃድ የለውም። የተፈቀደላቸው አስተዳዳሪዎች ብቻ ናቸው የሚፈቀድላቸው።`
         );
+      }
+    } catch (err: any) {
+      console.error('Firebase Auth sign-in error:', err);
+      // Don't show scary error if user closed the popup window
+      if (err?.code === 'auth/popup-closed-by-user') {
         setIsConnecting(false);
         return;
       }
 
-      const client = google.accounts.oauth2.initTokenClient({
-        client_id: '682048999019-f51079lq7qr692r8mb4e27avqqec3sro.apps.googleusercontent.com',
-        scope: 'openid profile email',
-        callback: async (tokenResponse: any) => {
-          if (tokenResponse && tokenResponse.access_token) {
-            try {
-              const res = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-                headers: {
-                  Authorization: `Bearer ${tokenResponse.access_token}`
-                }
-              });
-              
-              if (!res.ok) {
-                throw new Error('Failed to fetch user profile');
-              }
-
-              const userInfo = await res.json();
-              
-              const user: AdminUser = {
-                email: userInfo.email,
-                name: userInfo.name,
-                picture: userInfo.picture
-              };
-
-              // Strict admin check
-              if (user.email.toLowerCase() === 'yared.abegaz@gmail.com') {
-                onLoginSuccess(user);
-                setError(null);
-                onClose();
-              } else {
-                setError(
-                  currentLanguage === 'en'
-                    ? `Access Denied: "${user.email}" is not authorized. Only designated Administrators are allowed.`
-                    : `መዳረሻ ተከልክሏል፡ "${user.email}" የአስተዳዳሪ ፈቃድ የለውም። የተፈቀደላቸው አስተዳዳሪዎች ብቻ ናቸው የሚፈቀድላቸው።`
-                );
-              }
-            } catch (err) {
-              console.error('Error fetching user info:', err);
-              setError(
-                currentLanguage === 'en'
-                  ? 'Failed to retrieve Google user profile details.'
-                  : 'የጉግል ፕሮፋይል መረጃን ማግኘት አልተቻለም።'
-              );
-            } finally {
-              setIsConnecting(false);
-            }
-          } else {
-            setIsConnecting(false);
-          }
-        },
-        error_callback: (err: any) => {
-          console.error('OAuth error callback:', err);
-          setError(
-            currentLanguage === 'en'
-              ? 'Google authorization was canceled or failed.'
-              : 'የጉግል ማረጋገጫ ተቋርጧል ወይም አልተሳካም።'
-          );
-          setIsConnecting(false);
-        }
-      });
-
-      client.requestAccessToken();
-    } catch (err) {
-      console.error('OAuth execution error:', err);
       setError(
         currentLanguage === 'en'
-          ? 'An unexpected error occurred during sign-in.'
-          : 'በመግቢያው ሂደት ላይ ያልተጠበቀ ስህተት አጋጥሟል።'
+          ? (err.message || 'Google Sign-In failed via Firebase Authentication.')
+          : 'በጉግል መግቢያ አልተሳካም። እባክዎን እንደገና ይሞክሩ።'
       );
+    } finally {
       setIsConnecting(false);
     }
   };
@@ -189,7 +148,7 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
             </svg>
             <span>
               {isConnecting 
-                ? (currentLanguage === 'en' ? 'Connecting...' : 'በመገናኘት ላይ...') 
+                ? (currentLanguage === 'en' ? 'Connecting to Firebase...' : 'በመገናኘት ላይ...') 
                 : (currentLanguage === 'en' ? 'Continue with Google' : 'በጉግል ቀጥል')}
             </span>
           </button>

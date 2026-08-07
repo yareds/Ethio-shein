@@ -1,0 +1,73 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Catalog item in EthioShein store",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique product ID" },
+        "name": { "type": "string", "description": "Product title" },
+        "description": { "type": "string", "description": "Detailed product description" },
+        "price": { "type": "number", "description": "Price in ETB" },
+        "originalPrice": { "type": "number", "description": "Optional compare-at price" },
+        "categoryId": { "type": "string", "description": "Category slug or ID" },
+        "images": { "type": "array", "description": "Product image URLs" },
+        "sizes": { "type": "array", "description": "Available clothing sizes" },
+        "colors": { "type": "array", "description": "Available color variants" },
+        "inventory": { "type": "number", "description": "Stock count" },
+        "featured": { "type": "boolean", "description": "Whether highlighted on homepage" },
+        "brand": { "type": "string", "description": "Brand name" },
+        "rating": { "type": "number", "description": "Average user rating" },
+        "reviewsCount": { "type": "number", "description": "Number of reviews" },
+        "tags": { "type": "array", "description": "Search tags" },
+        "createdAt": { "type": "string", "description": "ISO timestamp" }
+      },
+      "required": ["id", "name", "price", "categoryId", "images"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product collection category",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Category ID" },
+        "name": { "type": "string", "description": "Category name" },
+        "slug": { "type": "string", "description": "URL slug" },
+        "description": { "type": "string", "description": "Category summary" },
+        "image": { "type": "string", "description": "Cover image URL" }
+      },
+      "required": ["id", "name", "slug"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer order inquiry submission",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Order ID" },
+        "customerName": { "type": "string", "description": "Customer name" },
+        "customerPhone": { "type": "string", "description": "Phone number" },
+        "customerCity": { "type": "string", "description": "Delivery city" },
+        "items": { "type": "array", "description": "Ordered line items" },
+        "totalAmount": { "type": "number", "description": "Total order amount in ETB" },
+        "date": { "type": "string", "description": "ISO date string" },
+        "status": { "type": "string", "enum": ["pending", "contacted", "completed", "canceled"] },
+        "channel": { "type": "string", "enum": ["telegram", "whatsapp", "phone"] },
+        "notes": { "type": "string", "description": "Special delivery notes" }
+      },
+      "required": ["id", "customerName", "customerPhone", "items", "totalAmount", "status", "channel"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": { "$ref": "#/entities/Product" },
+      "description": "Store product catalog"
+    },
+    "/categories/{categoryId}": {
+      "schema": { "$ref": "#/entities/Category" },
+      "description": "Product categories"
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Customer order inquiries"
+    }
+  }
+}

@@ -1,7 +1,7 @@
 import React from 'react';
 import { 
   Sliders, Plus, Edit2, Trash2, CheckCircle, Clock, Search, Tag, 
-  AlertCircle, DollarSign, Package, MessageSquare, PlusCircle, ArrowLeft, Save, X 
+  AlertCircle, DollarSign, Package, MessageSquare, PlusCircle, ArrowLeft, Save, X, Database 
 } from 'lucide-react';
 import { Product, Category, Order } from '../types';
 
@@ -16,6 +16,7 @@ interface AdminDashboardProps {
   onDeleteCategory: (id: string) => void;
   onUpdateOrderStatus: (id: string, status: Order['status']) => void;
   onDeleteOrder: (id: string) => void;
+  onSeedFirestore?: () => Promise<void>;
 }
 
 export default function AdminDashboard({
@@ -28,7 +29,8 @@ export default function AdminDashboard({
   onAddCategory,
   onDeleteCategory,
   onUpdateOrderStatus,
-  onDeleteOrder
+  onDeleteOrder,
+  onSeedFirestore
 }: AdminDashboardProps) {
   const [activeTab, setActiveTab] = React.useState<'products' | 'categories' | 'inquiries'>('products');
   const [productSearch, setProductSearch] = React.useState('');
@@ -239,7 +241,18 @@ export default function AdminDashboard({
           <h1 className="text-3xl font-fraunces font-bold text-espresso">EthioShein Admin Panel</h1>
           <p className="text-sm text-espresso-soft mt-1">Manage products, categories, stock, and live customer messaging inquiries.</p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {onSeedFirestore && (
+            <button
+              onClick={onSeedFirestore}
+              className="bg-ivory-dark/40 hover:bg-ochre hover:text-espresso text-espresso font-bold text-xs px-4 py-3 rounded-xl flex items-center space-x-2 border border-ivory-dark transition-all cursor-pointer shadow-xs"
+              id="admin-seed-firestore-btn"
+              title="Upload default mock catalog data to Firestore database"
+            >
+              <Database className="w-4 h-4 text-terracotta" />
+              <span>Seed / Reset Catalog to Firestore</span>
+            </button>
+          )}
           {!isFormOpen && activeTab === 'products' && (
             <button
               onClick={handleOpenAddForm}

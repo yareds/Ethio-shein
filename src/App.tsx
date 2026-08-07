@@ -10,10 +10,13 @@ import SEOContent from './components/SEOContent';
 import LoginModal from './components/LoginModal';
 import ContactModal from './components/ContactModal';
 import { 
-  getStoredProducts, saveStoredProducts, 
-  getStoredCategories, saveStoredCategories, 
-  getStoredOrders, saveStoredOrders 
+  getStoredProducts, saveSingleProduct, deleteSingleProduct,
+  getStoredCategories, saveSingleCategory, deleteSingleCategory,
+  getStoredOrders, saveSingleOrder, updateOrderStatus, deleteSingleOrder,
+  seedFirestoreWithDefaults 
 } from './services/db';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from './services/firebase';
 import { translations } from './services/localization';
 import { Product, Category, Order, CartItem, Language, AdminUser } from './types';
 import { ShoppingBag, ChevronRight, Sparkles, Filter, X } from 'lucide-react';
@@ -31,31 +34,74 @@ export default function App() {
 
   const t = (key: string) => translations[currentLanguage][key] || key;
 
-  // 2. Database/Local Persistence States
-  const [products, setProducts] = useState<Product[]>(() => getStoredProducts());
-  const [categories, setCategories] = useState<Category[]>(() => getStoredCategories());
-  const [orders, setOrders] = useState<Order[]>(() => getStoredOrders());
+  // 2. Database / Firestore Async States
+  const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoadingData, setIsLoadingData] = useState(true);
 
-  // 3. Navigation & Filtering States
+  // Load Firestore data on mount
+  useEffect(() => {
+    let isMounted = true;
+    async function fetchDatabase() {
+      setIsLoadingData(true);
+      try {
+        const [fetchedProds, fetchedCats, fetchedOrds] = await Promise.all([
+          getStoredProducts(),
+          getStoredCategories(),
+          getStoredOrders()
+        ]);
+        if (isMounted) {
+          setProducts(fetchedProds);
+          setCategories(fetchedCats);
+          setOrders(fetchedOrds);
+        }
+      } catch (err) {
+        console.error("Failed to load initial data from Firestore:", err);
+      } finally {
+        if (isMounted) setIsLoadingData(false);
+      }
+    }
+    fetchDatabase();
+    return () => { isMounted = false; };
+  }, []);
+
+  // 3. Navigation & Firebase Auth States
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [isAdminMode, setIsAdminMode] = useState(false);
-  const [adminUser, setAdminUser] = useState<AdminUser | null>(() => {
-    const stored = localStorage.getItem('ethioshein_admin_user_v1');
-    return stored ? JSON.parse(stored) : null;
-  });
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
+  // Sync Firebase Auth state
   useEffect(() => {
-    if (adminUser) {
-      localStorage.setItem('ethioshein_admin_user_v1', JSON.stringify(adminUser));
-    } else {
-      localStorage.removeItem('ethioshein_admin_user_v1');
-      setIsAdminMode(false);
-    }
-  }, [adminUser]);
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
+      if (firebaseUser && firebaseUser.email?.toLowerCase() === 'yared.abegaz@gmail.com') {
+        const userObj: AdminUser = {
+          email: firebaseUser.email,
+          name: firebaseUser.displayName || 'Admin',
+          picture: firebaseUser.photoURL || undefined
+        };
+        setAdminUser(userObj);
+      } else {
+        setAdminUser(null);
+        setIsAdminMode(false);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
-  // 4. Cart State (with persistent loading)
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      setAdminUser(null);
+      setIsAdminMode(false);
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
+
+  // 4. Cart State (client-side shopping bag state)
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const stored = localStorage.getItem('ethioshein_cart_items_v1');
     return stored ? JSON.parse(stored) : [];
@@ -70,87 +116,105 @@ export default function App() {
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
   const [contactModalOpen, setContactModalOpen] = useState(false);
 
-  // --- CATALOG CRUD ACTIONS ---
-  const handleAddProduct = (newProd: Omit<Product, 'id' | 'createdAt'>) => {
-    if (!adminUser || adminUser.email.toLowerCase() !== 'yared.abegaz@gmail.com') {
-      alert("Unauthorized: Only yared.abegaz@gmail.com can make modifications.");
-      return;
+  // --- ONE-TIME FIRESTORE SEEDING ACTION ---
+  const handleSeedFirestore = async () => {
+    try {
+      const result = await seedFirestoreWithDefaults(true);
+      alert(`Firestore database seeded successfully!\n- ${result.productsCount} products\n- ${result.categoriesCount} categories\n- ${result.ordersCount} orders`);
+      const [p, c, o] = await Promise.all([
+        getStoredProducts(),
+        getStoredCategories(),
+        getStoredOrders()
+      ]);
+      setProducts(p);
+      setCategories(c);
+      setOrders(o);
+    } catch (err: any) {
+      alert("Firestore seeding failed: " + (err.message || String(err)));
     }
+  };
+
+  // --- CATALOG CRUD ACTIONS ---
+  const handleAddProduct = async (newProd: Omit<Product, 'id' | 'createdAt'>) => {
     const productToAdd: Product = {
       ...newProd,
       id: `prod-${Date.now()}`,
       createdAt: new Date().toISOString()
     };
-    const updated = [productToAdd, ...products];
-    setProducts(updated);
-    saveStoredProducts(updated);
+    try {
+      await saveSingleProduct(productToAdd);
+      const updated = [productToAdd, ...products];
+      setProducts(updated);
+    } catch (err: any) {
+      alert("Error adding product to Firestore: " + (err.message || String(err)));
+    }
   };
 
-  const handleUpdateProduct = (updatedProd: Product) => {
-    if (!adminUser || adminUser.email.toLowerCase() !== 'yared.abegaz@gmail.com') {
-      alert("Unauthorized: Only yared.abegaz@gmail.com can make modifications.");
-      return;
+  const handleUpdateProduct = async (updatedProd: Product) => {
+    try {
+      await saveSingleProduct(updatedProd);
+      const updated = products.map(p => p.id === updatedProd.id ? updatedProd : p);
+      setProducts(updated);
+    } catch (err: any) {
+      alert("Error updating product in Firestore: " + (err.message || String(err)));
     }
-    const updated = products.map(p => p.id === updatedProd.id ? updatedProd : p);
-    setProducts(updated);
-    saveStoredProducts(updated);
   };
 
-  const handleDeleteProduct = (id: string) => {
-    if (!adminUser || adminUser.email.toLowerCase() !== 'yared.abegaz@gmail.com') {
-      alert("Unauthorized: Only yared.abegaz@gmail.com can make modifications.");
-      return;
+  const handleDeleteProduct = async (id: string) => {
+    try {
+      await deleteSingleProduct(id);
+      const updated = products.filter(p => p.id !== id);
+      setProducts(updated);
+    } catch (err: any) {
+      alert("Error deleting product from Firestore: " + (err.message || String(err)));
     }
-    const updated = products.filter(p => p.id !== id);
-    setProducts(updated);
-    saveStoredProducts(updated);
   };
 
   // --- CATEGORIES CRUD ACTIONS ---
-  const handleAddCategory = (newCat: Omit<Category, 'id' | 'slug'>) => {
-    if (!adminUser || adminUser.email.toLowerCase() !== 'yared.abegaz@gmail.com') {
-      alert("Unauthorized: Only yared.abegaz@gmail.com can make modifications.");
-      return;
-    }
+  const handleAddCategory = async (newCat: Omit<Category, 'id' | 'slug'>) => {
     const categoryToAdd: Category = {
       ...newCat,
       id: `cat-${Date.now()}`,
       slug: newCat.name.toLowerCase().replace(/\s+/g, '-')
     };
-    const updated = [...categories, categoryToAdd];
-    setCategories(updated);
-    saveStoredCategories(updated);
+    try {
+      await saveSingleCategory(categoryToAdd);
+      const updated = [...categories, categoryToAdd];
+      setCategories(updated);
+    } catch (err: any) {
+      alert("Error adding category to Firestore: " + (err.message || String(err)));
+    }
   };
 
-  const handleDeleteCategory = (id: string) => {
-    if (!adminUser || adminUser.email.toLowerCase() !== 'yared.abegaz@gmail.com') {
-      alert("Unauthorized: Only yared.abegaz@gmail.com can make modifications.");
-      return;
+  const handleDeleteCategory = async (id: string) => {
+    try {
+      await deleteSingleCategory(id);
+      const updated = categories.filter(c => c.id !== id);
+      setCategories(updated);
+    } catch (err: any) {
+      alert("Error deleting category from Firestore: " + (err.message || String(err)));
     }
-    const updated = categories.filter(c => c.id !== id);
-    setCategories(updated);
-    saveStoredCategories(updated);
   };
 
   // --- ORDERS / INQUIRIES ACTIONS ---
-  const handleUpdateOrderStatus = (orderId: string, status: Order['status']) => {
-    if (!adminUser || adminUser.email.toLowerCase() !== 'yared.abegaz@gmail.com') {
-      alert("Unauthorized: Only yared.abegaz@gmail.com can make modifications.");
-      return;
+  const handleUpdateOrderStatus = async (orderId: string, status: Order['status']) => {
+    try {
+      await updateOrderStatus(orderId, status);
+      const updated = orders.map(o => o.id === orderId ? { ...o, status } : o);
+      setOrders(updated);
+    } catch (err: any) {
+      alert("Error updating order status in Firestore: " + (err.message || String(err)));
     }
-    const updated = orders.map(o => o.id === orderId ? { ...o, status } : o);
-    setOrders(updated);
-    saveStoredOrders(updated);
   };
 
-  const handleDeleteOrder = (id: string) => {
-    if (!adminUser || adminUser.email.toLowerCase() !== 'yared.abegaz@gmail.com') {
-      alert("Unauthorized: Only yared.abegaz@gmail.com can make modifications.");
-      return;
+  const handleDeleteOrder = async (id: string) => {
+    try {
+      await deleteSingleOrder(id);
+      const updated = orders.filter(o => o.id !== id);
+      setOrders(updated);
+    } catch (err: any) {
+      alert("Error deleting order from Firestore: " + (err.message || String(err)));
     }
-    const updated = orders.filter(o => o.id !== id);
-    setOrders(updated);
-    saveStoredOrders(updated);
   };
 
   // --- SHOPPING CART TRANSITIONS ---
@@ -191,7 +255,7 @@ export default function App() {
   };
 
   // --- LOCALIZED DISPATCH SUBMISSION & STOCK DEDUCTION ---
-  const handleCheckoutSubmit = (
+  const handleCheckoutSubmit = async (
     customerName: string,
     customerPhone: string,
     customerCity: string,
@@ -221,12 +285,15 @@ export default function App() {
       notes: notes.trim() ? notes : undefined
     };
 
-    // 2. Append order log
-    const updatedOrders = [newOrder, ...orders];
-    setOrders(updatedOrders);
-    saveStoredOrders(updatedOrders);
+    // 2. Persist order log to Firestore (public create allowed by rules)
+    try {
+      await saveSingleOrder(newOrder);
+      setOrders(prev => [newOrder, ...prev]);
+    } catch (err) {
+      console.error("Error saving order to Firestore:", err);
+    }
 
-    // 3. Deduct product inventory count automatically
+    // 3. Deduct product inventory count locally in state
     const updatedProducts = products.map(p => {
       const quantityPurchased = cartItems
         .filter(item => item.product.id === p.id)
@@ -242,7 +309,6 @@ export default function App() {
     });
 
     setProducts(updatedProducts);
-    saveStoredProducts(updatedProducts);
   };
 
   // Reset/Empty cart helper called when the user finishes viewing success redirection screen
@@ -308,7 +374,7 @@ export default function App() {
         setActiveCategory={setActiveCategory}
         adminUser={adminUser}
         onLoginClick={() => setLoginModalOpen(true)}
-        onLogout={() => setAdminUser(null)}
+        onLogout={handleLogout}
         onContactClick={() => setContactModalOpen(true)}
       />
 
@@ -328,6 +394,7 @@ export default function App() {
               onDeleteCategory={handleDeleteCategory}
               onUpdateOrderStatus={handleUpdateOrderStatus}
               onDeleteOrder={handleDeleteOrder}
+              onSeedFirestore={handleSeedFirestore}
             />
           </div>
         ) : (
@@ -381,7 +448,12 @@ export default function App() {
                 </div>
 
                 {/* Main Product Grid */}
-                {filteredProducts.length === 0 ? (
+                {isLoadingData ? (
+                  <div className="text-center py-20 bg-white border border-ivory-dark rounded-3xl p-8 max-w-lg mx-auto shadow-xs">
+                    <div className="animate-spin w-8 h-8 border-4 border-espresso border-t-transparent rounded-full mx-auto mb-4"></div>
+                    <p className="font-bold text-espresso text-sm">Loading EthioShein Catalog from Firestore...</p>
+                  </div>
+                ) : filteredProducts.length === 0 ? (
                   <div className="text-center py-20 bg-white border border-ivory-dark rounded-3xl p-8 max-w-lg mx-auto shadow-xs" id="no-results-screen">
                     <p className="font-bold text-espresso text-sm mb-1">No items found matching your filters.</p>
                     <p className="text-xs text-espresso-soft mb-4">Try searching different keywords or selecting other categories.</p>
