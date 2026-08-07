@@ -44,12 +44,11 @@ export default function CartDrawer({
   const cartTotal = cartItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0);
 
   // Generate beautiful preformatted text for Telegram/WhatsApp
-  const generateOrderMessageText = (name: string, phone: string, city: string, notes: string) => {
+  const generateOrderMessageText = (name: string, phone: string, notes: string) => {
     let msg = `🌟 *NEW ORDER FROM ETHIOSHEIN* 🌟\n`;
     msg += `----------------------------------\n`;
     msg += `👤 *Customer:* ${name}\n`;
-    msg += `📞 *Phone:* ${phone}\n`;
-    msg += `📍 *Delivery City:* ${city}\n\n`;
+    msg += `📞 *Phone:* ${phone}\n\n`;
     msg += `🛍️ *Items Ordered:*\n`;
     
     cartItems.forEach((item, index) => {
@@ -61,17 +60,18 @@ export default function CartDrawer({
     if (notes.trim()) {
       msg += `📝 *Special Notes:* ${notes}\n`;
     }
-    msg += `\nThank you for shopping with EthioShein! Please send this message to finalize your delivery scheduling.`;
+    msg += `\nContact Info:\nTelegram: @yared_abegaz | WhatsApp: +15714749554 | Call: 0995967804\n`;
+    msg += `Thank you for shopping with EthioShein!`;
     return msg;
   };
 
   const handleFormSubmit = (channel: 'telegram' | 'whatsapp' | 'phone') => {
-    if (!customerName.trim() || !customerPhone.trim() || !customerCity) {
+    if (!customerName.trim() || !customerPhone.trim()) {
       alert(currentLanguage === 'en' ? 'Please fill out all required fields.' : 'እባክዎን ሁሉንም አስፈላጊ መረጃዎችን ያስገቡ።');
       return;
     }
 
-    const message = generateOrderMessageText(customerName, customerPhone, customerCity, orderNotes);
+    const message = generateOrderMessageText(customerName, customerPhone, orderNotes);
     setFormattedMessage(message);
     setSubmittedChannel(channel);
 
@@ -80,23 +80,21 @@ export default function CartDrawer({
     const encodedText = encodeURIComponent(message);
     
     if (channel === 'telegram') {
-      // Direct Telegram link
-      // Use standard share URL which is extremely stable across mobile & desktop devices
-      link = `https://t.me/share/url?url=${encodeURIComponent('https://ethioshein.com')}&text=${encodedText}`;
+      // Direct Telegram link to @yared_abegaz
+      link = `https://t.me/yared_abegaz?text=${encodedText}`;
     } else if (channel === 'whatsapp') {
-      // Direct WhatsApp link - using a placeholder Ethiopian customer care phone line
-      // or standard wa.me API
-      link = `https://wa.me/251911223344?text=${encodedText}`;
+      // Direct WhatsApp link to +15714749554
+      link = `https://wa.me/15714749554?text=${encodedText}`;
     } else {
-      // Direct call protocol
-      link = `tel:+251911223344`;
+      // Direct call protocol to 0995967804
+      link = `tel:0995967804`;
     }
 
     setRedirectLink(link);
     setFormSubmitted(true);
 
     // Call checkout submission to parent context to save order log
-    onCheckoutSubmit(customerName, customerPhone, customerCity, orderNotes, channel);
+    onCheckoutSubmit(customerName, customerPhone, customerCity || 'N/A', orderNotes, channel);
   };
 
   const copyToClipboard = () => {
@@ -199,7 +197,7 @@ export default function CartDrawer({
                       id="telegram-redirect-cta"
                     >
                       <Send className="w-4 h-4 text-white" />
-                      <span>Open Telegram & Paste</span>
+                      <span>Open Telegram (@yared_abegaz)</span>
                       <ChevronRight className="w-4 h-4" />
                     </a>
                   )}
@@ -213,7 +211,7 @@ export default function CartDrawer({
                       id="whatsapp-redirect-cta"
                     >
                       <MessageSquare className="w-4 h-4 text-white" />
-                      <span>Open WhatsApp & Send</span>
+                      <span>Open WhatsApp (+15714749554)</span>
                       <ChevronRight className="w-4 h-4" />
                     </a>
                   )}
@@ -225,7 +223,7 @@ export default function CartDrawer({
                       id="phone-redirect-cta"
                     >
                       <Phone className="w-4 h-4" />
-                      <span>Dial Representative Now</span>
+                      <span>Dial 0995967804 Now</span>
                       <ChevronRight className="w-4 h-4" />
                     </a>
                   )}
@@ -369,25 +367,6 @@ export default function CartDrawer({
                         required
                         id="form-customer-phone"
                       />
-                    </div>
-
-                    {/* Customer Location City */}
-                    <div className="space-y-1">
-                      <label className="text-xs font-bold text-espresso">
-                        {t('cart.customerCity')} *
-                      </label>
-                      <select
-                        value={customerCity}
-                        onChange={(e) => setCustomerCity(e.target.value)}
-                        className="w-full bg-white border border-ivory-dark rounded-xl px-3 py-2 text-sm text-espresso focus:outline-hidden focus:ring-1 focus:ring-terracotta focus:border-terracotta"
-                        required
-                        id="form-customer-city"
-                      >
-                        <option value="">-- {t('cart.customerCityPlaceholder')} --</option>
-                        {ETHIOPIAN_CITIES.map(city => (
-                          <option key={city} value={city}>{city}</option>
-                        ))}
-                      </select>
                     </div>
 
                     {/* Special Notes */}

@@ -67,8 +67,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
               } else {
                 setError(
                   currentLanguage === 'en'
-                    ? `Access Denied: "${user.email}" is not authorized as an administrator. Only "yared.abegaz@gmail.com" has admin rights.`
-                    : `መዳረሻ ተከልክሏል፡ "${user.email}" የአስተዳዳሪ ፈቃድ የለውም። "yared.abegaz@gmail.com" ብቻ ነው የአስተዳዳሪ መብት ያለው።`
+                    ? `Access Denied: "${user.email}" is not authorized. Only designated Administrators are allowed.`
+                    : `መዳረሻ ተከልክሏል፡ "${user.email}" የአስተዳዳሪ ፈቃድ የለውም። የተፈቀደላቸው አስተዳዳሪዎች ብቻ ናቸው የሚፈቀድላቸው።`
                 );
               }
             } catch (err) {
@@ -141,8 +141,8 @@ export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLan
         {/* Description */}
         <p className="text-xs sm:text-sm text-espresso-soft text-center leading-relaxed mb-6">
           {currentLanguage === 'en'
-            ? 'Connect your Google Account to authorize back-office access. Only yared.abegaz@gmail.com is allowed to manage inventory, catalog categories, and customer orders.'
-            : 'የአስተዳዳሪ ፖርታሉን ለመክፈት የጉግል አካውንትዎን ያገናኙ። "yared.abegaz@gmail.com" ብቻ ነው እቃዎችን፣ ካታሎጎችን እና የደንበኛ ትዕዛዞችን ማስተዳደር የሚችለው።'}
+            ? 'Connect your Google Account to authorize back-office access. Only Admin is allowed to manage inventory, catalog categories, and customer orders.'
+            : 'የአስተዳዳሪ ፖርታሉን ለመክፈት የጉግል አካውንትዎን ያገናኙ። የተፈቀደላቸው አስተዳዳሪዎች ብቻ ናቸው እቃዎችን፣ ካታሎጎችን እና የደንበኛ ትዕዛዞችን ማስተዳደር የሚችሉት።'}
         </p>
 
         {/* Error Notification Banner */}

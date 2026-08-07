@@ -8,6 +8,7 @@ import AdminDashboard from './components/AdminDashboard';
 import Testimonials from './components/Testimonials';
 import SEOContent from './components/SEOContent';
 import LoginModal from './components/LoginModal';
+import ContactModal from './components/ContactModal';
 import { 
   getStoredProducts, saveStoredProducts, 
   getStoredCategories, saveStoredCategories, 
@@ -67,6 +68,7 @@ export default function App() {
   // 5. Interactive UI drawers/modals state
   const [activeProduct, setActiveProduct] = useState<Product | null>(null);
   const [cartDrawerOpen, setCartDrawerOpen] = useState(false);
+  const [contactModalOpen, setContactModalOpen] = useState(false);
 
   // --- CATALOG CRUD ACTIONS ---
   const handleAddProduct = (newProd: Omit<Product, 'id' | 'createdAt'>) => {
@@ -307,6 +309,7 @@ export default function App() {
         adminUser={adminUser}
         onLoginClick={() => setLoginModalOpen(true)}
         onLogout={() => setAdminUser(null)}
+        onContactClick={() => setContactModalOpen(true)}
       />
 
       {/* 2. Main Workstage */}
@@ -413,11 +416,11 @@ export default function App() {
               </div>
             </div>
 
-            {/* Trust Features & Customer Reviews Testimonials Section */}
-            <Testimonials currentLanguage={currentLanguage} />
-
             {/* Crawlable, SEO Rich Localized Content with FAQs */}
             <SEOContent currentLanguage={currentLanguage} />
+
+            {/* Trust Features & Customer Reviews Testimonials Section */}
+            <Testimonials currentLanguage={currentLanguage} />
 
           </div>
         )}
@@ -425,7 +428,7 @@ export default function App() {
 
       {/* 3. Universal Footer */}
       <footer className="bg-espresso text-ivory-dark/80 py-12 border-t border-ivory-dark" id="universal-footer">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-4">
             <span className="font-sans font-black text-xl text-ivory tracking-widest">
               ETHIO<span className="text-terracotta font-medium">SHEIN</span>
@@ -435,40 +438,48 @@ export default function App() {
             </p>
           </div>
           <div>
-            <h4 className="text-ivory text-xs font-fraunces font-bold uppercase tracking-widest mb-4">Regional Hubs</h4>
-            <ul className="text-xs space-y-2 text-ivory-dark/70">
-              <li>Addis Ababa (Bole, Shiro Meda)</li>
-              <li>Hawassa City Center</li>
-              <li>Bahir Dar (Lake Tana)</li>
-              <li>Adama & Dire Dawa</li>
-            </ul>
-          </div>
-          <div>
             <h4 className="text-ivory text-xs font-fraunces font-bold uppercase tracking-widest mb-4">Helpful Links</h4>
-            <ul className="text-xs space-y-2 text-ivory-dark/70">
+            <ul className="text-xs space-y-2.5 text-ivory-dark/70">
+              <li><button onClick={() => setContactModalOpen(true)} className="hover:text-ochre text-ochre font-bold cursor-pointer text-left flex items-center space-x-1"><span>✉ Contact Us / Send Message</span></button></li>
               <li><button onClick={() => { if (adminUser && adminUser.email.toLowerCase() === 'yared.abegaz@gmail.com') { setIsAdminMode(true); } else { setLoginModalOpen(true); } }} className="hover:text-ivory cursor-pointer text-left">Admin Portal</button></li>
               <li><button onClick={() => { setActiveCategory('all'); setIsAdminMode(false); }} className="hover:text-ivory cursor-pointer text-left">Latest Catalog</button></li>
               <li><button onClick={() => setLanguage(currentLanguage === 'en' ? 'am' : 'en')} className="hover:text-ivory cursor-pointer text-left">አማርኛ / Switch Language</button></li>
             </ul>
           </div>
           <div className="space-y-3">
-            <h4 className="text-ivory text-xs font-fraunces font-bold uppercase tracking-widest mb-4">Customer Care</h4>
+            <h4 className="text-ivory text-xs font-fraunces font-bold uppercase tracking-widest mb-4">Customer Care & Support</h4>
             <p className="text-xs text-ivory-dark/70">Have questions or want to order directly? Chat with us now:</p>
-            <div className="flex space-x-2">
+            <div className="flex flex-wrap gap-2 pt-1">
               <a 
-                href="https://t.me/EthioSheinSupport" 
+                href="https://t.me/yared_abegaz" 
                 target="_blank" 
                 rel="noopener noreferrer" 
-                className="bg-ivory-dark/20 hover:bg-terracotta text-ivory text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 border border-ivory-dark/30 transition-colors"
+                className="bg-ivory-dark/20 hover:bg-terracotta text-ivory text-xs font-bold px-3 py-2 rounded-xl flex items-center space-x-1 border border-ivory-dark/30 transition-colors"
               >
-                <span>Telegram Chat</span>
+                <span>Telegram: @yared_abegaz</span>
               </a>
               <a 
-                href="tel:+251911223344" 
-                className="bg-ivory-dark/20 hover:bg-forest text-ivory text-xs font-bold px-3 py-1.5 rounded-lg flex items-center space-x-1 border border-ivory-dark/30 transition-colors"
+                href="https://wa.me/15714749554" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="bg-ivory-dark/20 hover:bg-forest text-ivory text-xs font-bold px-3 py-2 rounded-xl flex items-center space-x-1 border border-ivory-dark/30 transition-colors"
               >
-                <span>Call Us</span>
+                <span>WhatsApp: +15714749554</span>
               </a>
+              <a 
+                href="tel:0995967804" 
+                className="bg-ivory-dark/20 hover:bg-forest text-ivory text-xs font-bold px-3 py-2 rounded-xl flex items-center space-x-1 border border-ivory-dark/30 transition-colors"
+              >
+                <span>Call: 0995967804</span>
+              </a>
+            </div>
+            <div className="pt-2">
+              <button 
+                onClick={() => setContactModalOpen(true)}
+                className="w-full bg-terracotta hover:bg-terracotta-dark text-ivory text-xs font-bold py-2.5 px-4 rounded-xl transition-all shadow-xs cursor-pointer flex items-center justify-center space-x-2"
+              >
+                <span>Open Contact Form</span>
+              </button>
             </div>
           </div>
         </div>
@@ -507,6 +518,13 @@ export default function App() {
           setAdminUser(user);
           setIsAdminMode(true);
         }}
+        currentLanguage={currentLanguage}
+      />
+
+      {/* 7. Contact Us Modal */}
+      <ContactModal
+        isOpen={contactModalOpen}
+        onClose={() => setContactModalOpen(false)}
         currentLanguage={currentLanguage}
       />
 

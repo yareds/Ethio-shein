@@ -1,5 +1,5 @@
 import React from 'react';
-import { ShoppingBag, Search, Globe, User, Shield, Menu, X } from 'lucide-react';
+import { ShoppingBag, Search, Globe, User, Shield, Menu, X, Phone, Send, MessageSquare, Mail } from 'lucide-react';
 import { Language, AdminUser } from '../types';
 import { translations } from '../services/localization';
 
@@ -18,6 +18,7 @@ interface HeaderProps {
   adminUser: AdminUser | null;
   onLoginClick: () => void;
   onLogout: () => void;
+  onContactClick?: () => void;
 }
 
 export default function Header({
@@ -34,13 +35,45 @@ export default function Header({
   setActiveCategory,
   adminUser,
   onLoginClick,
-  onLogout
+  onLogout,
+  onContactClick
 }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const t = (key: string) => translations[currentLanguage][key] || key;
 
   return (
     <header className="sticky top-0 z-50 bg-ivory/95 backdrop-blur-md border-b border-ivory-dark shadow-xs" id="main-header">
+      {/* Top Contact Announcement Banner */}
+      <div className="bg-espresso text-ivory text-[11px] sm:text-xs py-1.5 px-4 border-b border-terracotta/30" id="top-contact-banner">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center space-x-3 sm:space-x-5 text-ivory-dark/90">
+            <a href="tel:0995967804" className="flex items-center space-x-1.5 hover:text-ochre transition-colors font-medium">
+              <Phone className="w-3 h-3 text-terracotta shrink-0" />
+              <span>0995967804</span>
+            </a>
+            <a href="https://t.me/yared_abegaz" target="_blank" rel="noopener noreferrer" className="hidden sm:flex items-center space-x-1.5 hover:text-ochre transition-colors font-medium">
+              <Send className="w-3 h-3 text-ochre shrink-0" />
+              <span>Telegram: @yared_abegaz</span>
+            </a>
+            <a href="https://wa.me/15714749554" target="_blank" rel="noopener noreferrer" className="hidden md:flex items-center space-x-1.5 hover:text-ochre transition-colors font-medium">
+              <MessageSquare className="w-3 h-3 text-forest-light shrink-0" />
+              <span>WhatsApp: +15714749554</span>
+            </a>
+          </div>
+
+          <div className="flex items-center space-x-3">
+            <button 
+              onClick={onContactClick} 
+              className="flex items-center space-x-1.5 text-ochre hover:text-ivory font-bold bg-white/10 hover:bg-terracotta px-3 py-0.5 rounded-full transition-all cursor-pointer text-[10px] sm:text-[11px]"
+              id="top-banner-contact-btn"
+            >
+              <Mail className="w-3 h-3" />
+              <span>{currentLanguage === 'en' ? 'Contact Us' : 'እኛን ለማግኘት'}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20">
           
@@ -54,9 +87,6 @@ export default function Header({
               className="flex items-center space-x-2 group cursor-pointer"
               id="logo-button"
             >
-              <div className="bg-espresso text-ivory p-2 rounded-md font-mono tracking-widest text-lg font-black group-hover:bg-terracotta transition-colors shadow-xs">
-                ES
-              </div>
               <span className="font-sans font-bold tracking-tight text-xl sm:text-2xl text-espresso">
                 ETHIO<span className="text-terracotta font-medium">SHEIN</span>
               </span>
