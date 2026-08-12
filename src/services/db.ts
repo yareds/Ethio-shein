@@ -53,6 +53,11 @@ const SEED_ORDERS: Order[] = [
   }
 ];
 
+function sanitizeForFirestore<T>(data: T): T {
+  if (data === undefined) return null as any;
+  return JSON.parse(JSON.stringify(data));
+}
+
 // --- PRODUCTS ---
 export async function getStoredProducts(): Promise<Product[]> {
   try {
@@ -74,7 +79,8 @@ export async function getStoredProducts(): Promise<Product[]> {
 export async function saveStoredProducts(products: Product[]): Promise<void> {
   try {
     for (const p of products) {
-      await setDoc(doc(db, PRODUCTS_COLLECTION, p.id), p);
+      const cleanData = sanitizeForFirestore(p);
+      await setDoc(doc(db, PRODUCTS_COLLECTION, cleanData.id), cleanData);
     }
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, PRODUCTS_COLLECTION);
@@ -83,7 +89,8 @@ export async function saveStoredProducts(products: Product[]): Promise<void> {
 
 export async function saveSingleProduct(product: Product): Promise<void> {
   try {
-    await setDoc(doc(db, PRODUCTS_COLLECTION, product.id), product);
+    const cleanData = sanitizeForFirestore(product);
+    await setDoc(doc(db, PRODUCTS_COLLECTION, cleanData.id), cleanData);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `${PRODUCTS_COLLECTION}/${product.id}`);
   }
@@ -118,7 +125,8 @@ export async function getStoredCategories(): Promise<Category[]> {
 export async function saveStoredCategories(categories: Category[]): Promise<void> {
   try {
     for (const c of categories) {
-      await setDoc(doc(db, CATEGORIES_COLLECTION, c.id), c);
+      const cleanData = sanitizeForFirestore(c);
+      await setDoc(doc(db, CATEGORIES_COLLECTION, cleanData.id), cleanData);
     }
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, CATEGORIES_COLLECTION);
@@ -127,7 +135,8 @@ export async function saveStoredCategories(categories: Category[]): Promise<void
 
 export async function saveSingleCategory(category: Category): Promise<void> {
   try {
-    await setDoc(doc(db, CATEGORIES_COLLECTION, category.id), category);
+    const cleanData = sanitizeForFirestore(category);
+    await setDoc(doc(db, CATEGORIES_COLLECTION, cleanData.id), cleanData);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `${CATEGORIES_COLLECTION}/${category.id}`);
   }
@@ -164,7 +173,8 @@ export async function getStoredOrders(): Promise<Order[]> {
 export async function saveStoredOrders(orders: Order[]): Promise<void> {
   try {
     for (const o of orders) {
-      await setDoc(doc(db, ORDERS_COLLECTION, o.id), o);
+      const cleanData = sanitizeForFirestore(o);
+      await setDoc(doc(db, ORDERS_COLLECTION, cleanData.id), cleanData);
     }
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, ORDERS_COLLECTION);
@@ -173,7 +183,8 @@ export async function saveStoredOrders(orders: Order[]): Promise<void> {
 
 export async function saveSingleOrder(order: Order): Promise<void> {
   try {
-    await setDoc(doc(db, ORDERS_COLLECTION, order.id), order);
+    const cleanData = sanitizeForFirestore(order);
+    await setDoc(doc(db, ORDERS_COLLECTION, cleanData.id), cleanData);
   } catch (error) {
     handleFirestoreError(error, OperationType.WRITE, `${ORDERS_COLLECTION}/${order.id}`);
   }
@@ -208,7 +219,8 @@ export async function seedFirestoreWithDefaults(overwrite = false): Promise<{
     let seededCategories = 0;
     if (categoriesSnap.empty || overwrite) {
       for (const cat of INITIAL_CATEGORIES) {
-        await setDoc(doc(db, CATEGORIES_COLLECTION, cat.id), cat);
+        const cleanCat = sanitizeForFirestore(cat);
+        await setDoc(doc(db, CATEGORIES_COLLECTION, cleanCat.id), cleanCat);
         seededCategories++;
       }
     }
@@ -218,7 +230,8 @@ export async function seedFirestoreWithDefaults(overwrite = false): Promise<{
     let seededProducts = 0;
     if (productsSnap.empty || overwrite) {
       for (const prod of INITIAL_PRODUCTS) {
-        await setDoc(doc(db, PRODUCTS_COLLECTION, prod.id), prod);
+        const cleanProd = sanitizeForFirestore(prod);
+        await setDoc(doc(db, PRODUCTS_COLLECTION, cleanProd.id), cleanProd);
         seededProducts++;
       }
     }
@@ -228,7 +241,8 @@ export async function seedFirestoreWithDefaults(overwrite = false): Promise<{
     let seededOrders = 0;
     if (ordersSnap.empty || overwrite) {
       for (const ord of SEED_ORDERS) {
-        await setDoc(doc(db, ORDERS_COLLECTION, ord.id), ord);
+        const cleanOrd = sanitizeForFirestore(ord);
+        await setDoc(doc(db, ORDERS_COLLECTION, cleanOrd.id), cleanOrd);
         seededOrders++;
       }
     }

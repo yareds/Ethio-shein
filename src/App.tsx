@@ -297,7 +297,7 @@ export default function App() {
       date: new Date().toISOString(),
       status: 'pending',
       channel,
-      notes: notes.trim() ? notes : undefined
+      ...(notes.trim() ? { notes: notes.trim() } : {})
     };
 
     // 2. Persist order log to Firestore (public create allowed by rules)

@@ -2,6 +2,7 @@ import React from 'react';
 import { Tag, Sparkles } from 'lucide-react';
 import { Language } from '../types';
 import { translations } from '../services/localization';
+import ShatterText from './ShatterText';
 
 interface HeroProps {
   currentLanguage: Language;
@@ -30,15 +31,23 @@ export default function Hero({ currentLanguage, onExploreClick }: HeroProps) {
               <span>{t('hero.badge')}</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-fraunces font-bold tracking-tight text-espresso leading-tight">
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-fraunces font-bold tracking-tight text-espresso leading-tight pb-2">
               {currentLanguage === 'en' ? (
-                <>
-                  Fast Fashion, <span className="italic font-normal text-terracotta">Habesha</span> Style
-                </>
+                <ShatterText
+                  segments={[
+                    { text: 'Fast Fashion, ' },
+                    { text: 'Habesha', className: 'text-terracotta', isItalic: true },
+                    { text: ' Style' },
+                  ]}
+                />
               ) : (
-                <>
-                  ዘመናዊ ፋሽን፣ በ<span className="italic font-normal text-terracotta">ሐበሻ</span> ስታይል
-                </>
+                <ShatterText
+                  segments={[
+                    { text: 'ዘመናዊ ፋሽን፣ በ' },
+                    { text: 'ሐበሻ', className: 'text-terracotta', isItalic: true },
+                    { text: ' ስታይል' },
+                  ]}
+                />
               )}
             </h1>
             
