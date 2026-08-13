@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Shield, X, AlertTriangle } from 'lucide-react';
-import { signInWithRedirect, getRedirectResult, signOut } from 'firebase/auth';
-import { auth, googleProvider } from '../services/firebase';
+import { Shield, X, AlertTriangle, Lock, Mail } from 'lucide-react';
+import { signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import { auth } from '../services/firebase';
 import { AdminUser, Language } from '../types';
 
 interface LoginModalProps {
@@ -12,92 +12,17 @@ interface LoginModalProps {
   currentLanguage: Language;
 }
 
-export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSuccess, currentLanguage }: LoginModalProps) {
+export default function LoginModal({ isOpen, onClose, onLoginSuccess, currentLanguage }: LoginModalProps) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [isConnecting, setIsConnecting] = useState(false);
-
-  // Process redirect result when component mounts (on return from Google sign-in redirect)
-  useEffect(() => {
-    let isMounted = true;
-
-    const processRedirect = async () => {
-      let timeoutId: ReturnType<typeof setTimeout> | null = null;
-      const timeoutPromise = new Promise<never>((_, reject) => {
-        timeoutId = setTimeout(() => reject(new Error('AUTH_TIMEOUT')), 15000);
-      });
-
-      try {
-        const userCredential = await Promise.race([
-          getRedirectResult(auth),
-          timeoutPromise
-        ]);
-
-        if (!isMounted || !userCredential) return;
-        const firebaseUser = userCredential.user;
-        if (!firebaseUser.email) return;
-
-        const user: AdminUser = {
-          email: firebaseUser.email,
-          name: firebaseUser.displayName || 'Admin User',
-          picture: firebaseUser.photoURL || undefined,
-        };
-
-        // Strict admin email check
-        if (user.email.toLowerCase() === 'yared.abegaz@gmail.com') {
-          onLoginSuccess(user);
-          setError(null);
-          onClose();
-        } else {
-          await signOut(auth);
-          setError(
-            currentLanguage === 'en'
-              ? `Access Denied: "${user.email}" is not authorized. Only designated Administrators are allowed.`
-              : `መዳረሻ ተከልክሏል፡ "${user.email}" የአስተዳዳሪ ፈቃድ የለውም።`
-          );
-          if (onOpenModal) onOpenModal();
-        }
-      } catch (err: any) {
-        if (!isMounted) return;
-        console.error('Firebase Auth redirect result error:', err);
-        if (err?.message === 'AUTH_TIMEOUT') {
-          setError(
-            currentLanguage === 'en'
-              ? 'Sign-in timed out — please try again.'
-              : 'የመግባት ጊዜው አልፏል — እባክዎን እንደገና ይሞክሩ።'
-          );
-        } else if (
-          err?.code === 'auth/invalid-continue-uri' || 
-          err?.code === 'auth/unauthorized-domain' || 
-          (typeof err?.message === 'string' && (err.message.includes('invalid-continue-uri') || err.message.includes('unauthorized-domain')))
-        ) {
-          setError(
-            currentLanguage === 'en'
-              ? `Domain Authorization Pending (${window.location.host}): To complete Google sign-in, please add "${window.location.host}" to Firebase Console -> Authentication -> Settings -> Authorized Domains.`
-              : `የጎራ ፈቃድ በመጠባበቅ ላይ ነው (${window.location.host})፡ እባክዎን በፋየርቤዝ ኮንሶል (Authentication -> Settings -> Authorized Domains) ውስጥ ይፍቀዱ።`
-          );
-        } else {
-          setError(
-            currentLanguage === 'en'
-              ? (err.message || 'Google Sign-In failed via Firebase Authentication.')
-              : 'በጉግል መግቢያ አልተሳካም። እባክዎን እንደገና ይሞክሩ።'
-          );
-        }
-        if (onOpenModal) onOpenModal();
-      } finally {
-        if (timeoutId) clearTimeout(timeoutId);
-      }
-    };
-
-    processRedirect();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   // Clear errors and reset state when modal is opened or closed
   useEffect(() => {
     if (isOpen) {
+      setEmail('');
+      setPassword('');
       setError(null);
       setIsConnecting(false);
     }
@@ -105,49 +30,54 @@ export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSucces
 
   if (!isOpen) return null;
 
-  const handleGoogleLogin = async () => {
-    if (isConnecting) return;
+  const handleEmailLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!email.trim() || !password) {
+      setError(
+        currentLanguage === 'en'
+          ? 'Please fill out both email and password fields.'
+          : 'እባክዎን ኢሜይል እና የይለፍ ቃል ያስገቡ።'
+      );
+      return;
+    }
+
     setError(null);
     setIsConnecting(true);
 
-    let timeoutId: ReturnType<typeof setTimeout> | null = null;
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      timeoutId = setTimeout(() => reject(new Error('AUTH_TIMEOUT')), 15000);
-    });
-
     try {
-      await Promise.race([
-        signInWithRedirect(auth, googleProvider),
-        timeoutPromise
-      ]);
-    } catch (err: any) {
-      console.error('Firebase Auth signInWithRedirect error:', err);
-      if (err?.message === 'AUTH_TIMEOUT') {
-        setError(
-          currentLanguage === 'en'
-            ? 'Sign-in timed out — please try again.'
-            : 'የመግባት ጊዜው አልፏል — እባክዎን እንደገና ይሞክሩ።'
-        );
-      } else if (
-        err?.code === 'auth/invalid-continue-uri' || 
-        err?.code === 'auth/unauthorized-domain' || 
-        (typeof err?.message === 'string' && (err.message.includes('invalid-continue-uri') || err.message.includes('unauthorized-domain')))
-      ) {
-        setError(
-          currentLanguage === 'en'
-            ? `Domain Authorization Pending (${window.location.host}): To complete Google sign-in, please add "${window.location.host}" to Firebase Console -> Authentication -> Settings -> Authorized Domains.`
-            : `የጎራ ፈቃድ በመጠባበቅ ላይ ነው (${window.location.host})፡ እባክዎን በፋየርቤዝ ኮንሶል (Authentication -> Settings -> Authorized Domains) ውስጥ ይፍቀዱ።`
-        );
+      const userCredential = await signInWithEmailAndPassword(auth, email.trim(), password);
+      const firebaseUser = userCredential.user;
+
+      if (!firebaseUser.email) {
+        throw new Error('No email returned from authentication');
+      }
+
+      const user: AdminUser = {
+        email: firebaseUser.email,
+        name: firebaseUser.displayName || 'Admin User',
+        picture: firebaseUser.photoURL || undefined,
+      };
+
+      // Strict admin email check
+      if (user.email.toLowerCase() === 'yared.abegaz@gmail.com') {
+        onLoginSuccess(user);
+        setError(null);
+        onClose();
       } else {
+        await signOut(auth);
         setError(
           currentLanguage === 'en'
-            ? (err.message || 'Google Sign-In failed via Firebase Authentication.')
-            : 'በጉግል መግቢያ አልተሳካም። እባክዎን እንደገና ይሞክሩ።'
+            ? `Access Denied: "${user.email}" is not authorized. Only designated Administrators are allowed.`
+            : `መዳረሻ ተከልክሏል፡ "${user.email}" የአስተዳዳሪ ፈቃድ የለውም።`
         );
       }
-      setIsConnecting(false);
+    } catch (err: any) {
+      console.error('Firebase Email Auth sign-in error:', err);
+      setError(
+        err?.message || (currentLanguage === 'en' ? 'Sign-in failed. Please check your credentials.' : 'መግባት አልተሳካም። እባክዎን መረጃዎን ያረጋግጡ።')
+      );
     } finally {
-      if (timeoutId) clearTimeout(timeoutId);
+      setIsConnecting(false);
     }
   };
 
@@ -175,8 +105,8 @@ export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSucces
             </h3>
             <p className="text-xs text-espresso-soft mt-1">
               {currentLanguage === 'en' 
-                ? 'Sign in securely with your Google Account.' 
-                : 'በጉግል መለያዎ ደህንነቱ በተጠበቀ ሁኔታ ይግቡ።'}
+                ? 'Sign in securely with your Email and Password.' 
+                : 'በኢሜይል እና በይለፍ ቃልዎ ደህንነቱ በተጠበቀ ሁኔታ ይግቡ።'}
             </p>
           </div>
         </div>
@@ -194,42 +124,61 @@ export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSucces
           </div>
         )}
 
-        {/* Google Sign In Option */}
-        <button
-          onClick={handleGoogleLogin}
-          disabled={isConnecting}
-          className={`w-full flex items-center justify-center space-x-3 py-3.5 px-4 bg-espresso text-ochre hover:bg-espresso-dark rounded-2xl shadow-sm text-sm font-bold transition-all cursor-pointer ${
-            isConnecting ? 'opacity-60 cursor-not-allowed' : ''
-          }`}
-          id="google-signin-action-button"
-        >
-          <svg className="w-5 h-5 shrink-0" viewBox="0 0 24 24">
-            <path
-              fill="#EA4335"
-              d="M12 5.04c1.66 0 3.2.57 4.38 1.69l3.27-3.27C17.67 1.48 14.98 1 12 1 7.35 1 3.37 3.68 1.4 7.6l3.86 3C6.18 7.6 8.84 5.04 12 5.04z"
-            />
-            <path
-              fill="#4285F4"
-              d="M23.49 12.27c0-.81-.07-1.59-.2-2.34H12v4.44h6.44c-.28 1.46-1.1 2.7-2.34 3.54l3.64 2.82c2.13-1.97 3.75-4.86 3.75-8.46z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.26 14.4c-.24-.72-.38-1.5-.38-2.4s.14-1.68.38-2.4L1.4 6.6C.5 8.22 0 10.05 0 12s.5 3.78 1.4 5.4l3.86-3z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 23c3.24 0 5.97-1.07 7.96-2.91l-3.64-2.82c-1.11.75-2.53 1.19-4.32 1.19-3.16 0-5.82-2.56-6.77-5.56L1.37 15.9C3.33 19.82 7.33 23 12 23z"
-            />
-          </svg>
-          <span>
+        {/* Email & Password Form */}
+        <form onSubmit={handleEmailLogin} className="space-y-4">
+          <div>
+            <label className="block text-xs font-bold text-espresso uppercase tracking-wider mb-1.5">
+              {currentLanguage === 'en' ? 'Email Address' : 'ኢሜይል አድራሻ'}
+            </label>
+            <div className="relative">
+              <Mail className="w-4 h-4 text-espresso-soft absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@example.com"
+                className="w-full bg-white border border-ivory-dark rounded-xl pl-10 pr-4 py-3 text-sm text-espresso focus:outline-hidden focus:ring-2 focus:ring-espresso focus:border-transparent"
+                required
+                id="email-input"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-xs font-bold text-espresso uppercase tracking-wider mb-1.5">
+              {currentLanguage === 'en' ? 'Password' : 'የይለፍ ቃል'}
+            </label>
+            <div className="relative">
+              <Lock className="w-4 h-4 text-espresso-soft absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full bg-white border border-ivory-dark rounded-xl pl-10 pr-4 py-3 text-sm text-espresso focus:outline-hidden focus:ring-2 focus:ring-espresso focus:border-transparent"
+                required
+                id="password-input"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={isConnecting}
+            className={`w-full py-3.5 px-4 bg-espresso text-ochre hover:bg-espresso-dark rounded-2xl shadow-sm text-sm font-bold transition-all cursor-pointer ${
+              isConnecting ? 'opacity-60 cursor-not-allowed' : ''
+            }`}
+            id="email-signin-action-button"
+          >
             {isConnecting
-              ? (currentLanguage === 'en' ? 'Connecting to Google...' : 'ከጉግል ጋር በመገናኘት ላይ...')
-              : (currentLanguage === 'en' ? 'Continue with Google' : 'በጉግል ቀጥል')}
-          </span>
-        </button>
+              ? (currentLanguage === 'en' ? 'Signing In...' : 'በመግባት ላይ...')
+              : (currentLanguage === 'en' ? 'Sign In' : 'ይግቡ')}
+          </button>
+        </form>
 
         <div className="mt-4 text-center">
           <button
+            type="button"
             onClick={onClose}
             className="py-2 text-xs font-bold text-espresso-soft hover:text-espresso transition-colors cursor-pointer"
             id="cancel-login-action"
@@ -242,3 +191,4 @@ export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSucces
     </div>
   );
 }
+
