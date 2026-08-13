@@ -599,6 +599,7 @@ export default function App() {
       <LoginModal
         isOpen={loginModalOpen}
         onClose={() => setLoginModalOpen(false)}
+        onOpenModal={() => setLoginModalOpen(true)}
         onLoginSuccess={(user) => {
           setAdminUser(user);
           setIsAdminMode(true);
