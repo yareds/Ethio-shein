@@ -19,8 +19,19 @@ export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSucces
   // Process redirect result when component mounts (on return from Google sign-in redirect)
   useEffect(() => {
     let isMounted = true;
-    getRedirectResult(auth)
-      .then(async (userCredential) => {
+
+    const processRedirect = async () => {
+      let timeoutId: ReturnType<typeof setTimeout> | null = null;
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error('AUTH_TIMEOUT')), 15000);
+      });
+
+      try {
+        const userCredential = await Promise.race([
+          getRedirectResult(auth),
+          timeoutPromise
+        ]);
+
         if (!isMounted || !userCredential) return;
         const firebaseUser = userCredential.user;
         if (!firebaseUser.email) return;
@@ -45,11 +56,16 @@ export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSucces
           );
           if (onOpenModal) onOpenModal();
         }
-      })
-      .catch((err: any) => {
+      } catch (err: any) {
         if (!isMounted) return;
         console.error('Firebase Auth redirect result error:', err);
-        if (
+        if (err?.message === 'AUTH_TIMEOUT') {
+          setError(
+            currentLanguage === 'en'
+              ? 'Sign-in timed out — please try again.'
+              : 'የመግባት ጊዜው አልፏል — እባክዎን እንደገና ይሞክሩ።'
+          );
+        } else if (
           err?.code === 'auth/invalid-continue-uri' || 
           err?.code === 'auth/unauthorized-domain' || 
           (typeof err?.message === 'string' && (err.message.includes('invalid-continue-uri') || err.message.includes('unauthorized-domain')))
@@ -67,7 +83,12 @@ export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSucces
           );
         }
         if (onOpenModal) onOpenModal();
-      });
+      } finally {
+        if (timeoutId) clearTimeout(timeoutId);
+      }
+    };
+
+    processRedirect();
 
     return () => {
       isMounted = false;
@@ -89,11 +110,25 @@ export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSucces
     setError(null);
     setIsConnecting(true);
 
+    let timeoutId: ReturnType<typeof setTimeout> | null = null;
+    const timeoutPromise = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error('AUTH_TIMEOUT')), 15000);
+    });
+
     try {
-      await signInWithRedirect(auth, googleProvider);
+      await Promise.race([
+        signInWithRedirect(auth, googleProvider),
+        timeoutPromise
+      ]);
     } catch (err: any) {
       console.error('Firebase Auth signInWithRedirect error:', err);
-      if (
+      if (err?.message === 'AUTH_TIMEOUT') {
+        setError(
+          currentLanguage === 'en'
+            ? 'Sign-in timed out — please try again.'
+            : 'የመግባት ጊዜው አልፏል — እባክዎን እንደገና ይሞክሩ።'
+        );
+      } else if (
         err?.code === 'auth/invalid-continue-uri' || 
         err?.code === 'auth/unauthorized-domain' || 
         (typeof err?.message === 'string' && (err.message.includes('invalid-continue-uri') || err.message.includes('unauthorized-domain')))
@@ -111,6 +146,8 @@ export default function LoginModal({ isOpen, onClose, onOpenModal, onLoginSucces
         );
       }
       setIsConnecting(false);
+    } finally {
+      if (timeoutId) clearTimeout(timeoutId);
     }
   };
 
