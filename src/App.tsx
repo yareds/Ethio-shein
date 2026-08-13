@@ -20,8 +20,10 @@ import { auth } from './services/firebase';
 import { translations } from './services/localization';
 import { Product, Category, Order, CartItem, Language, AdminUser } from './types';
 import { ShoppingBag, ChevronRight, Sparkles, Filter, X } from 'lucide-react';
+import { useToast } from './components/Toast';
 
 export default function App() {
+  const { showToast } = useToast();
   // 1. App Configuration & Lang State
   const [currentLanguage, setLanguage] = useState<Language>(() => {
     const stored = localStorage.getItem('ethioshein_lang_v1');
@@ -133,7 +135,11 @@ export default function App() {
   const handleSeedFirestore = async () => {
     try {
       const result = await seedFirestoreWithDefaults(true);
-      alert(`Firestore database seeded successfully!\n- ${result.productsCount} products\n- ${result.categoriesCount} categories\n- ${result.ordersCount} orders`);
+      showToast(
+        `Firestore database seeded successfully! (${result.productsCount} products, ${result.categoriesCount} categories, ${result.ordersCount} orders)`,
+        'success',
+        'Database Seeded'
+      );
       const [p, c, o] = await Promise.all([
         getStoredProducts(),
         getStoredCategories(),
@@ -143,7 +149,7 @@ export default function App() {
       setCategories(c);
       setOrders(o);
     } catch (err: any) {
-      alert("Firestore seeding failed: " + (err.message || String(err)));
+      showToast("Firestore seeding failed: " + (err.message || String(err)), 'error', 'Seeding Failed');
     }
   };
 
@@ -158,8 +164,9 @@ export default function App() {
       await saveSingleProduct(productToAdd);
       const updated = [productToAdd, ...products];
       setProducts(updated);
+      showToast(`Product "${productToAdd.name}" saved successfully!`, 'success', 'Product Added');
     } catch (err: any) {
-      alert("Error adding product to Firestore: " + (err.message || String(err)));
+      showToast("Error adding product: " + (err.message || String(err)), 'error', 'Save Failed');
     }
   };
 
@@ -168,8 +175,9 @@ export default function App() {
       await saveSingleProduct(updatedProd);
       const updated = products.map(p => p.id === updatedProd.id ? updatedProd : p);
       setProducts(updated);
+      showToast(`Product "${updatedProd.name}" updated successfully!`, 'success', 'Product Updated');
     } catch (err: any) {
-      alert("Error updating product in Firestore: " + (err.message || String(err)));
+      showToast("Error updating product: " + (err.message || String(err)), 'error', 'Update Failed');
     }
   };
 
@@ -178,8 +186,9 @@ export default function App() {
       await deleteSingleProduct(id);
       const updated = products.filter(p => p.id !== id);
       setProducts(updated);
+      showToast("Product deleted successfully.", 'info', 'Product Removed');
     } catch (err: any) {
-      alert("Error deleting product from Firestore: " + (err.message || String(err)));
+      showToast("Error deleting product: " + (err.message || String(err)), 'error', 'Delete Failed');
     }
   };
 
@@ -194,8 +203,9 @@ export default function App() {
       await saveSingleCategory(categoryToAdd);
       const updated = [...categories, categoryToAdd];
       setCategories(updated);
+      showToast(`Category "${categoryToAdd.name}" added successfully!`, 'success', 'Category Created');
     } catch (err: any) {
-      alert("Error adding category to Firestore: " + (err.message || String(err)));
+      showToast("Error adding category: " + (err.message || String(err)), 'error', 'Save Failed');
     }
   };
 
@@ -204,8 +214,9 @@ export default function App() {
       await deleteSingleCategory(id);
       const updated = categories.filter(c => c.id !== id);
       setCategories(updated);
+      showToast("Category deleted successfully.", 'info', 'Category Removed');
     } catch (err: any) {
-      alert("Error deleting category from Firestore: " + (err.message || String(err)));
+      showToast("Error deleting category: " + (err.message || String(err)), 'error', 'Delete Failed');
     }
   };
 
@@ -215,8 +226,9 @@ export default function App() {
       await updateOrderStatus(orderId, status);
       const updated = orders.map(o => o.id === orderId ? { ...o, status } : o);
       setOrders(updated);
+      showToast(`Order status updated to ${status}.`, 'success', 'Order Updated');
     } catch (err: any) {
-      alert("Error updating order status in Firestore: " + (err.message || String(err)));
+      showToast("Error updating order status: " + (err.message || String(err)), 'error', 'Update Failed');
     }
   };
 
@@ -225,8 +237,9 @@ export default function App() {
       await deleteSingleOrder(id);
       const updated = orders.filter(o => o.id !== id);
       setOrders(updated);
+      showToast("Order record deleted.", 'info', 'Order Deleted');
     } catch (err: any) {
-      alert("Error deleting order from Firestore: " + (err.message || String(err)));
+      showToast("Error deleting order: " + (err.message || String(err)), 'error', 'Delete Failed');
     }
   };
 

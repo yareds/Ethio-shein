@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { 
   Sliders, Plus, Edit2, Trash2, CheckCircle, Clock, Search, Tag, 
   AlertCircle, DollarSign, Package, MessageSquare, PlusCircle, ArrowLeft, Save, X, Database 
 } from 'lucide-react';
 import { Product, Category, Order } from '../types';
+import { useToast } from './Toast';
 
 interface AdminDashboardProps {
   products: Product[];
@@ -32,6 +33,9 @@ export default function AdminDashboard({
   onDeleteOrder,
   onSeedFirestore
 }: AdminDashboardProps) {
+  const t = (key: string) => key;
+  const { showToast } = useToast();
+  const [adminFormError, setAdminFormError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = React.useState<'products' | 'categories' | 'inquiries'>('products');
   const [productSearch, setProductSearch] = React.useState('');
   const [inquirySearch, setInquirySearch] = React.useState('');
@@ -122,6 +126,7 @@ export default function AdminDashboard({
 
   // Load editing product info
   const handleEditClick = (prod: Product) => {
+    setAdminFormError(null);
     setEditingProduct(prod);
     setFormName(prod.name);
     setFormBrand(prod.brand);
@@ -139,6 +144,7 @@ export default function AdminDashboard({
   };
 
   const handleOpenAddForm = () => {
+    setAdminFormError(null);
     setEditingProduct(null);
     setFormName('');
     setFormBrand('EthioShein');
@@ -160,9 +166,12 @@ export default function AdminDashboard({
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formName || !formCategory || formPrice <= 0) {
-      alert('Please fill out required fields.');
+      const msg = 'Please fill out all required fields.';
+      setAdminFormError(msg);
+      showToast(msg, 'error', 'Required Fields Missing');
       return;
     }
+    setAdminFormError(null);
 
     const payload = {
       name: formName,
@@ -330,6 +339,12 @@ export default function AdminDashboard({
           </div>
 
           <form onSubmit={handleFormSubmit} className="space-y-6">
+            {adminFormError && (
+              <div className="p-3.5 bg-red-50 border border-red-200 rounded-xl flex items-center space-x-2.5 text-red-700 animate-fadeIn" id="admin-form-error-banner">
+                <AlertCircle className="w-5 h-5 text-red-600 shrink-0" />
+                <span className="text-xs font-bold">{adminFormError}</span>
+              </div>
+            )}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               
               {/* Field 1: Name */}
@@ -530,7 +545,7 @@ export default function AdminDashboard({
                         const file = e.target.files?.[0];
                         if (file) {
                           if (file.size > 2 * 1024 * 1024) {
-                            alert('Image is too large. Please select an image under 2MB.');
+                            showToast('Image is too large. Please select an image under 2MB.', 'error', 'File Too Large');
                             return;
                           }
                           const reader = new FileReader();
@@ -855,7 +870,7 @@ export default function AdminDashboard({
                                 const file = e.target.files?.[0];
                                 if (file) {
                                   if (file.size > 2 * 1024 * 1024) {
-                                    alert('Image is too large. Please select an image under 2MB.');
+                                    showToast('Image is too large. Please select an image under 2MB.', 'error', 'File Too Large');
                                     return;
                                   }
                                   const reader = new FileReader();

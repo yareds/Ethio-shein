@@ -1,7 +1,8 @@
 import React from 'react';
-import { X, Trash2, ShoppingBag, Send, Phone, MessageSquare, Clipboard, Check, ChevronRight } from 'lucide-react';
+import { X, Trash2, ShoppingBag, Send, Phone, MessageSquare, Clipboard, Check, ChevronRight, AlertTriangle } from 'lucide-react';
 import { CartItem, Language, Order } from '../types';
 import { translations, ETHIOPIAN_CITIES } from '../services/localization';
+import { useToast } from './Toast';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -29,12 +30,14 @@ export default function CartDrawer({
   onCheckoutSubmit
 }: CartDrawerProps) {
   const t = (key: string) => translations[currentLanguage][key] || key;
+  const { showToast } = useToast();
 
   // Checkout form fields state
   const [customerName, setCustomerName] = React.useState('');
   const [customerPhone, setCustomerPhone] = React.useState('');
   const [customerCity, setCustomerCity] = React.useState('');
   const [orderNotes, setOrderNotes] = React.useState('');
+  const [checkoutError, setCheckoutError] = React.useState<string | null>(null);
   const [formSubmitted, setFormSubmitted] = React.useState(false);
   const [submittedChannel, setSubmittedChannel] = React.useState<'telegram' | 'whatsapp' | 'phone' | null>(null);
   const [formattedMessage, setFormattedMessage] = React.useState('');
@@ -67,10 +70,15 @@ export default function CartDrawer({
 
   const handleFormSubmit = (channel: 'telegram' | 'whatsapp' | 'phone') => {
     if (!customerName.trim() || !customerPhone.trim()) {
-      alert(currentLanguage === 'en' ? 'Please fill out all required fields.' : 'እባክዎን ሁሉንም አስፈላጊ መረጃዎችን ያስገቡ።');
+      const errorMsg = currentLanguage === 'en' 
+        ? 'Please fill out all required fields.' 
+        : 'እባክዎን ሁሉንም አስፈላጊ መረጃዎችን ያስገቡ።';
+      setCheckoutError(errorMsg);
+      showToast(errorMsg, 'error', currentLanguage === 'en' ? 'Missing Information' : 'ያልተሟላ መረጃ');
       return;
     }
 
+    setCheckoutError(null);
     const message = generateOrderMessageText(customerName, customerPhone, orderNotes);
     setFormattedMessage(message);
     setSubmittedChannel(channel);
@@ -345,7 +353,10 @@ export default function CartDrawer({
                       <input
                         type="text"
                         value={customerName}
-                        onChange={(e) => setCustomerName(e.target.value)}
+                        onChange={(e) => {
+                          setCustomerName(e.target.value);
+                          if (checkoutError) setCheckoutError(null);
+                        }}
                         placeholder="e.g. Yordanos Bekele"
                         className="w-full bg-white border border-ivory-dark rounded-xl px-3 py-2 text-sm text-espresso focus:outline-hidden focus:ring-1 focus:ring-terracotta focus:border-terracotta"
                         required
@@ -361,7 +372,10 @@ export default function CartDrawer({
                       <input
                         type="tel"
                         value={customerPhone}
-                        onChange={(e) => setCustomerPhone(e.target.value)}
+                        onChange={(e) => {
+                          setCustomerPhone(e.target.value);
+                          if (checkoutError) setCheckoutError(null);
+                        }}
                         placeholder="e.g. 0911223344"
                         className="w-full bg-white border border-ivory-dark rounded-xl px-3 py-2 text-sm text-espresso focus:outline-hidden focus:ring-1 focus:ring-terracotta focus:border-terracotta"
                         required
@@ -384,6 +398,14 @@ export default function CartDrawer({
                       ></textarea>
                     </div>
                   </div>
+
+                  {/* Inline Error Banner */}
+                  {checkoutError && (
+                    <div className="p-3 bg-terracotta/10 border border-terracotta/30 rounded-2xl flex items-center space-x-2 text-terracotta-dark animate-fadeIn" id="cart-checkout-error-banner">
+                      <AlertTriangle className="w-4 h-4 text-terracotta shrink-0" />
+                      <span className="text-xs font-bold leading-normal">{checkoutError}</span>
+                    </div>
+                  )}
 
                   {/* Submit dispatch triggers */}
                   <div className="space-y-2 pt-2">
