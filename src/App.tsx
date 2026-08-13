@@ -46,15 +46,13 @@ export default function App() {
     async function fetchDatabase() {
       setIsLoadingData(true);
       try {
-        const [fetchedProds, fetchedCats, fetchedOrds] = await Promise.all([
+        const [fetchedProds, fetchedCats] = await Promise.all([
           getStoredProducts(),
-          getStoredCategories(),
-          getStoredOrders()
+          getStoredCategories()
         ]);
         if (isMounted) {
           setProducts(fetchedProds);
           setCategories(fetchedCats);
-          setOrders(fetchedOrds);
         }
       } catch (err) {
         console.error("Failed to load initial data from Firestore:", err);

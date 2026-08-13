@@ -164,7 +164,11 @@ export async function getStoredOrders(): Promise<Order[]> {
     // Sort orders by date descending
     orders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     return orders;
-  } catch (error) {
+  } catch (error: any) {
+    if (error?.code === 'permission-denied' || (typeof error?.message === 'string' && error.message.includes('permissions'))) {
+      // Quietly return seed orders if user is unauthenticated or not an admin
+      return SEED_ORDERS;
+    }
     console.warn('Error fetching orders from Firestore:', error);
     return SEED_ORDERS;
   }
