@@ -1,12 +1,12 @@
 {
   "projectId": "ethio-shein",
-  "appId": "1:682048999019:web:ade261a1ed5badb687eb2e",
-  "apiKey": "AIzaSyD64yuykgYuuDKxFMzMgdS05dIVt2wQfjc",
+  "appId": "1:408659994385:web:2ebdfbc8567395c0a50eb0",
+  "apiKey": "AIzaSyCrGFs71vuuNKCbFNVWLkDAfraxfbeebM4",
   "authDomain": "ethio-shein.firebaseapp.com",
   "firestoreDatabaseId": "ethio-shein",
   "storageBucket": "ethio-shein.firebasestorage.app",
-  "messagingSenderId": "682048999019",
-  "measurementId": "",
-  "oAuthClientId": "682048999019-f51079lq7qr692r8mb4e27avqqec3sro.apps.googleusercontent.com",
+  "messagingSenderId": "408659994385",
+  "measurementId": "G-NEQZ3V4E19",
+  "oAuthClientId": "",
   "recaptchaSiteKey": ""
 }
